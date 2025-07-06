@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocy - Your Online Grocery Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-main">
+            <div class="header-left">
+                <a href="index.html" class="logo-link">
+                    <img src="logo.png" alt="Grocy Logo" class="logo">
+                </a>
+            </div>
+            <div class="header-middle">
+                <form class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-right">
+                <div class="header-icon" id="cart-icon-btn">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </div>
+                <div class="header-icon" id="theme-toggle-btn">
+                    <i class="fa fa-moon"></i>
+                    <span>Theme</span>
+                </div>
+                <a href="login.html" class="header-icon">
+                    <i class="fa fa-user-circle"></i>
+                    <span>Account</span>
+                </a>
+            </div>
+        </div>
+        <div class="header-sub">
+            <div class="categories">
+                <a href="#" class="active">All</a>
+                <a href="#">Vegetables</a>
+                <a href="#">Fruits</a>
+                <a href="#">Dairy</a>
+                <a href="#">Snacks</a>
+                <a href="#">Staples</a>
+            </div>
+            <div class="filter">
+                <button><i class="fa fa-filter"></i> Filter</button>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero-slider">
+        <div class="slider-wrapper">
+            <div class="slide"><img src="https://placehold.co/800x400/28a745/white?text=Fresh+Vegetables" alt="Offer 1"></div>
+            <div class="slide"><img src="https://placehold.co/800x400/f8c146/black?text=Amazing+Discounts" alt="Offer 2"></div>
+            <div class="slide"><img src="https://placehold.co/800x400/3498db/white?text=Fast+Delivery" alt="Offer 3"></div>
+        </div>
+        <button class="slider-btn prev-btn">&#10094;</button>
+        <button class="slider-btn next-btn">&#10095;</button>
+    </section>
+
+    <main>
+        <h2>Products</h2>
+        <div id="product-list">
+            </div>
+    </main>
+
+    <div id="cart-popup" class="cart-popup">
+        <div class="cart-popup-header">
+            <h2>My Cart</h2>
+            <button id="close-cart-btn">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-popup-items"></div>
+        <div class="cart-popup-footer">
+            <div class="total-section">
+                <span>Total:</span>
+                <strong>₹<span id="cart-total">0</span></strong>
+            </div>
+            <button id="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3>Grocy</h3>
+                <p>Your one-stop shop for all your grocery needs. Fresh products delivered to your doorstep.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section social">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Grocy. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>

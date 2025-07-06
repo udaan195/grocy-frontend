@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Gorcy</title>
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <header><h1>Checkout</h1></header>
+    <main>
+        <div id="checkout-container">
+            <div class="shipping-details">
+                <form id="shipping-form">
+                    <h2>Shipping Address</h2>
+                    <div class="form-group"><label for="name">Full name</label><input type="text" id="name" required></div>
+                    <div class="form-group"><label for="phone">Mobile number</label><input type="tel" id="phone" required></div>
+                    <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
+                    
+                    <button type="button" id="use-location-btn" class="location-btn"><i class="fa fa-map-marker-alt"></i> Use my current location</button>
+
+                    <div class="form-group"><label for="address">Flat, House no., Building</label><input type="text" id="address" required></div>
+                    <div class="form-group"><label for="area">Area, Street, Sector</label><input type="text" id="area" required></div>
+                    <div class="form-group"><label for="landmark">Landmark</label><input type="text" id="landmark" placeholder="E.g. near Apollo Hospital"></div>
+                    <div class="pincode-group">
+                        <div class="form-group"><label for="pincode">Pincode</label><input type="text" id="pincode" required maxlength="6"></div>
+                        <div class="form-group"><label for="city">Town/City</label><input type="text" id="city" required></div>
+                    </div>
+                    <div class="form-group"><label for="state">State</label><input type="text" id="state" required></div>
+
+                    <h2>Payment Method</h2>
+                    <div class="payment-options">
+                        <div class="payment-option"><input type="radio" id="cod" name="paymentMethod" value="COD" checked><label for="cod"><i class="fas fa-money-bill-wave"></i><span>Cash on Delivery</span></label></div>
+                        <div class="payment-option"><input type="radio" id="online" name="paymentMethod" value="Online"><label for="online"><i class="fas fa-credit-card"></i><span>Card, UPI & Net Banking</span></label></div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Place Order</button>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div id="summary-items"></div>
+                <div id="summary-total-section">
+                    <span>Total</span>
+                    <strong>₹<span id="summary-total">0</span></strong>
+                </div>
+            </div>
+        </div>
+        <div id="success-message" style="display:none; text-align:center;">
+             <h2>Thank you! Your order has been placed successfully.</h2>
+             <a href="index.html">Go back to shopping</a>
+        </div>
+    </main>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-section about">
+            <h3>Grocy</h3>
+            <p>Your one-stop shop for all your grocery needs. Fresh products delivered to your doorstep.</p>
+        </div>
+        <div class="footer-section links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section social">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Grocy. All Rights Reserved.</p>
+    </div>
+</footer>
+
+</html>

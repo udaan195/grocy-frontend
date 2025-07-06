@@ -1,0 +1,89 @@
+body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; }
+.profile-header { background-color: #28a745; color: white; padding: 10px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.profile-header-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; }
+.profile-header-container h1 { margin: 0; font-size: 1.5rem; }
+.profile-header-container .logo { max-height: 40px; }
+.go-shopping-link { color: white; text-decoration: none; border: 1px solid white; padding: 8px 12px; border-radius: 5px; }
+main { padding: 40px 20px; }
+.profile-container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.profile-details p { font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+.profile-actions { margin-top: 30px; display: grid; gap: 15px; }
+.action-btn { width: 100%; padding: 15px; text-align: left; background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-size: 1rem; text-decoration: none; color: #333; }
+.action-btn.danger { color: #dc3545; font-weight: bold; }
+.form-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee; }
+.form-section .form-group { margin-bottom: 15px; }
+.form-section label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-section input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+.form-section button { width: auto; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+.order-history { margin-top: 30px; }
+.order-history-item { background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+.order-history-item p { margin: 0 0 5px 0; }
+/* --- Footer Styling --- */
+footer {
+    background-color: #2c3e50; /* Dark Blue/Gray Color */
+    color: #bdc3c7; /* Light Gray Text */
+    padding: 40px 20px 10px 20px;
+    margin-top: 40px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.footer-section h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.footer-section.about p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-section.links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section.links ul li a {
+    color: #bdc3c7;
+    text-decoration: none;
+    margin-bottom: 10px;
+    display: block;
+    transition: color 0.2s;
+}
+
+.footer-section.links ul li a:hover {
+    color: #ffffff;
+}
+
+.social-icons a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: #34495e;
+    color: #ffffff;
+    margin-right: 10px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+}
+
+.social-icons a:hover {
+    background-color: #28a745; /* Primary Green Color */
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #34495e;
+    font-size: 0.9rem;
+}

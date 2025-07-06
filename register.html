@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Gorcy</title>
+    <link rel="stylesheet" href="css/form-style.css">
+</head>
+<body>
+    <div class="form-container">
+        <a href="index.html" class="home-link">
+            <img src="logo.png" alt="Gorcy Logo" class="logo">
+        </a>
+        <h2>Create Account</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div class="or-separator">OR</div>
+<a href="http://localhost:3000/api/users/auth/google" class="google-btn">
+    <i class="fab fa-google"></i>
+    <span>Sign in with Google</span>
+</a>
+
+        <div class="form-footer">
+            <p>Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+    </div>
+    <script src="js/register.js"></script>
+</body>
+</html>
