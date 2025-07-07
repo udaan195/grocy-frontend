@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Functions ---
     const fetchProducts = async () => {
         // अगर यूजर एडमिन है, तो सभी प्रोडक्ट लाओ। अगर वेंडर है, तो सिर्फ उसके प्रोडक्ट लाओ।
-        const url = (userInfo.role === 'admin') ? API_BASE_URL : `${API_BASE_URL}/myproducts`;
+        const url = (userInfo.role === 'admin') ? API_BASE_URL : `https://grocy-backend.onrender.com/myproducts`;
         
         try {
             const response = await fetch(url, { headers });

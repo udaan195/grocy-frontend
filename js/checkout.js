@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const API_BASE_URL = 'https://grocy-backend.onrender.com'; // **यहाँ अपना Render URL डालें**
+  
     // --- Elements ---
     const summaryItemsDiv = document.getElementById('summary-items');
     const summaryTotalSpan = document.getElementById('summary-total');
@@ -107,6 +109,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(shippingForm) {
         shippingForm.addEventListener('submit', async (event) => {
+          // COD ऑर्डर सेव करने के लिए
+        const response = await fetch(`https://grocy-backend.onrender.com/api/orders`, { /* ... */ });
+        
+        // Razorpay ऑर्डर बनाने के लिए
+        const orderResponse = await fetch(`${API_BASE_URL}/api/payment/orders`, { /* ... */ });
+
+        // पेमेंट वेरिफाई करने के लिए
+        const verificationResponse = await fetch(`${API_BASE_URL}/api/payment/verify`, { /* ... */ });
+    });
+});
             event.preventDefault();
             
             const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
@@ -180,7 +192,7 @@ const orderItems = cart.map(item => {
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_signature: response.razorpay_signature,
                             };
-                            const verificationResponse = await fetch('http://localhost:3000/api/payment/verify', {
+                            const verificationResponse = await fetch('https://grocy-backend.onrender.com/api/payment/verify', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(verificationBody),

@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  
+  const API_BASE_URL = 'https://grocy-backend.onrender.com'; // **यहाँ अपना Render URL डालें**
     const loginForm = document.getElementById('login-form');
 
     loginForm.addEventListener('submit', async (e) => {

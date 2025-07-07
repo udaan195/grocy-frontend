@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // सबसे ऊपर यह लाइन जोड़ें
+    const API_BASE_URL = 'https://grocy-backend.onrender.com'; // **यहाँ अपना Render URL डालें**
     // --- 1. सभी ज़रूरी एलिमेंट्स को पकड़ना ---
     const productListDiv = document.getElementById('product-list');
     const searchForm = document.querySelector('.search-bar');
