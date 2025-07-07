@@ -26,37 +26,70 @@
 
     function updateUserHeader() {
     if (!accountLink) return;
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
-    if (userInfo && userInfo.token) {
-        // नाम के साथ रोल भी दिखाएँ (जैसे: Pranshu (admin))
-        const userRole = userInfo.role || 'customer'; // अगर रोल नहीं है, तो customer मानें
-        accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userInfo.name.split(' ')[0]} (${userRole})</span>`;
-        accountLink.href = 'profile.html'; 
-    } else {
-        accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
-        accountLink.href = 'login.html'; 
+    // localStorage se data nikalein
+    const userInfoString = localStorage.getItem('userInfo');
+    
+    // Check karein ki data hai ya nahi
+    if (userInfoString) {
+        try {
+            const userInfo = JSON.parse(userInfoString);
+            
+            // Ab check karein ki data ke andar token hai ya nahi
+            if (userInfo && userInfo.token) {
+                const userRole = userInfo.role || 'customer';
+                accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userInfo.name.split(' ')[0]} (${userRole})</span>`;
+                accountLink.href = 'profile.html';
+                return; // Function ko yahin rok dein
+            }
+        } catch (error) {
+            console.error("Failed to parse userInfo from localStorage", error);
+        }
     }
+
+    // Agar upar ki koi bhi condition poori nahi hui, to user ko logged-out maanein
+    accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
+    accountLink.href = 'login.html';
 }
 
 
-    const fetchProducts = async (keyword = '', category = 'All') => {
-        if(!productListDiv) return;
-        productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-        try {
-            let url = `https://grocy-backend.onrender.com/api/products?keyword=${keyword}`;
-            if (category && category !== 'All') {
-                url += `&category=${category}`;
-            }
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error!`);
-            const products = await response.json();
-            productsData = products;
-            renderProducts();
-        } catch (error) {
-            productListDiv.innerHTML = '<p>Could not load products. Is the backend server running?</p>';
-        }
+
+   const fetchProducts = async (keyword = '', category = 'All') => {
+    if(!productListDiv) return;
+    productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+    
+    // User ki info aur token nikalein
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const token = userInfo ? userInfo.token : null;
+
+    // Headers object banayein
+    const headers = {
+        'Content-Type': 'application/json',
     };
+
+    // Agar token hai, to usko headers mein daalein
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+        let url = `${API_BASE_URL}/api/products?keyword=${keyword}`;
+        if (category && category !== 'All') {
+            url += `&category=${category}`;
+        }
+
+        // fetch call mein headers ka istemal karein
+        const response = await fetch(url, { headers: headers });
+
+        if (!response.ok) throw new Error(`HTTP error!`);
+        const products = await response.json();
+        productsData = products;
+        renderProducts();
+    } catch (error) {
+        productListDiv.innerHTML = '<p>Could not load products. Is the backend server running?</p>';
+    }
+};
+
 
     function renderProducts() {
         if(!productListDiv) return;
