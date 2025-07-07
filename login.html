@@ -2,45 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Gorcy</title>
     <link rel="stylesheet" href="css/form-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <div class="form-container">
-        <a href="index.html" class="home-link">
-            <img src="logo.png" alt="Gorcy Logo" class="logo">
-        </a>
+        <a href="index.html" class="home-link"><img src="logo.png" alt="Gorcy Logo" class="logo"></a>
         <h2>Login to your Account</h2>
         <form id="login-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required>
-            </div>
+            <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
+            <div class="form-group"><label for="password">Password</label><input type="password" id="password" required></div>
             <button type="submit">Login</button>
-            
-        <div class="forgot-password-link">
-    <a href="forgot-password.html">Forgot Password?</a>
-</div>
-<div class="form-footer">
-
         </form>
+        <div class="forgot-password-link"><a href="forgot-password.html">Forgot Password?</a></div>
         <div class="or-separator">OR</div>
-<a href="<a href="https://grocy-backend.onrender.com/api/users/auth/google" class="google-btn">
-    ...
-</a>
-" class="google-btn">
-    <i class="fab fa-google"></i>
-    <span>Sign in with Google</span>
-</a>
-
-        <div class="form-footer">
-            <p>Don't have an account? <a href="register.html">Register here</a></p>
-        </div>
+        <a href="https://grocy-backend.onrender.com/api/users/auth/google" class="google-btn">
+            <i class="fab fa-google"></i>
+            <span>Sign in with Google</span>
+        </a>
+        <div class="form-footer"><p>Don't have an account? <a href="register.html">Register here</a></p></div>
     </div>
     <script src="js/login.js"></script>
 </body>
