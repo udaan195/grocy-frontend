@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // **यह रहा ज़रूरी बदलाव**
         // अगर एडमिन है तो सभी ऑर्डर लाओ, अगर वेंडर है तो सिर्फ उसके ऑर्डर लाओ
         const url = (userInfo.role === 'admin') 
-            ? 'http://localhost:3000/api/orders' 
+            ? 'https://grocy-backend.onrender.com/api/orders' 
             : 'http://localhost:3000/api/orders/vendor';
 
         const response = await fetch(url, {

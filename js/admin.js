@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const API_BASE_URL = 'http://localhost:3000/api/products';
+    const API_BASE_URL = 'https://grocy-backend.onrender.com/api/products';
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userInfo.token}`

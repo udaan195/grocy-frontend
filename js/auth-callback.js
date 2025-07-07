@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (token) {
         try {
             // 2. इस टोकन का उपयोग करके यूजर की पूरी प्रोफाइल जानकारी पाएँ
-            const response = await fetch('http://localhost:3000/api/users/profile', {
+            const response = await fetch('https://grocy-backend.onrender.com/api/users/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

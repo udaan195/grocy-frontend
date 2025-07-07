@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!productListDiv) return;
         productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
         try {
-            let url = `http://localhost:3000/api/products?keyword=${keyword}`;
+            let url = `https://grocy-backend.onrender.com/api/products?keyword=${keyword}`;
             if (category && category !== 'All') {
                 url += `&category=${category}`;
             }

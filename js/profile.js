@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pincode: document.getElementById('edit-pincode').value,
             };
             try {
-                const response = await fetch('http://localhost:3000/api/users/profile', {
+                const response = await fetch('https://grocy-backend.onrender.com/api/users/profile', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userInfo.token}` },
                     body: JSON.stringify(updatedData)

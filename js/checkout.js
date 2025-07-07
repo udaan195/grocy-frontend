@@ -144,7 +144,7 @@ const orderItems = cart.map(item => {
                         } : null,
                     };
 
-                    const response = await fetch('http://localhost:3000/api/orders', {
+                    const response = await fetch('https://grocy-backend.onrender.com/api/orders', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userInfo.token}` },
                         body: JSON.stringify(orderData)
