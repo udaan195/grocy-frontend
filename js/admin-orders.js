@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const API_URL = 'http://localhost:3000/api/orders';
+    const API_URL = 'https://grocy-backend.onrender.com/api/orders';
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userInfo.token}`
@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // **यह रहा ज़रूरी बदलाव**
         // अगर एडमिन है तो सभी ऑर्डर लाओ, अगर वेंडर है तो सिर्फ उसके ऑर्डर लाओ
         const url = (userInfo.role === 'admin') 
-            ? 'https://grocy-backend.onrender.com/api/orders' 
-            : 'http://localhost:3000/api/orders/vendor';
+            ? 'https://grocy-backend.onrender.com/api/orders/vendor';
 
         const response = await fetch(url, {
             headers: {

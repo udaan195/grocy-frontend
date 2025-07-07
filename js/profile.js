@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!orderHistoryList) return;
         orderHistoryList.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
         try {
-            const response = await fetch('http://localhost:3000/api/orders/myorders', {
+            const response = await fetch('https://grocy-backend.onrender.com/api/orders/myorders', {
                 headers: { 'Authorization': `Bearer ${userInfo.token}` }
             });
             if (!response.ok) throw new Error('Could not fetch orders.');

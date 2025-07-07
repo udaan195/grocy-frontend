@@ -159,10 +159,10 @@ const orderItems = cart.map(item => {
                     checkoutContainer.style.display = 'none';
                     successMessage.style.display = 'block';
                 } else if (selectedPaymentMethod === 'Online') {
-                    const keyResponse = await fetch('http://localhost:3000/api/payment/getkey');
+                    const keyResponse = await fetch('https://grocy-backend.onrender.com/api/payment/getkey');
                     const { key } = await keyResponse.json();
 
-                    const orderResponse = await fetch('http://localhost:3000/api/payment/orders', {
+                    const orderResponse = await fetch('https://grocy-backend.onrender.com/api/payment/orders', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userInfo.token}` },
                         body: JSON.stringify({ amount: totalAmount }),
