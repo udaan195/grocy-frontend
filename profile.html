@@ -24,12 +24,20 @@
             </div>
 
             <div class="profile-actions">
-                <a href="admin.html" id="admin-panel-link" class="action-btn" style="display:none;">Admin/Vendor Panel</a>
-                <button id="show-orders-btn" class="action-btn" style="display:none;">My Purchase History</button>
+                <!-- यह लिंक सिर्फ एडमिन को दिखेगा -->
+                <a href="admin.html" id="admin-panel-link" class="action-btn" style="display:none;">Full Admin Panel</a>
+                
+                <!-- यह बटन सिर्फ वेंडर को दिखेगा -->
+                <button id="show-vendor-orders-btn" class="action-btn" style="display:none;">View My Sales</button>
+                
+                <!-- यह बटन सिर्फ ग्राहक को दिखेगा -->
+                <button id="show-customer-orders-btn" class="action-btn" style="display:none;">My Purchase History</button>
+                
                 <button id="edit-profile-btn" class="action-btn">Edit Profile & Address</button>
                 <button id="logout-btn" class="action-btn danger">Logout</button>
             </div>
 
+            <!-- Edit Profile Form (Hidden by default) -->
             <div id="edit-profile-form-container" class="form-section" style="display:none;">
                 <h3>Update Your Details</h3>
                 <form id="edit-profile-form">
@@ -41,8 +49,9 @@
                 </form>
             </div>
 
-            <div class="order-history" id="customer-order-history" style="display:none;">
-                <h3>Your Purchase History</h3>
+            <!-- Order History Section (Hidden by default) -->
+            <div class="order-history" id="order-history-container" style="display:none;">
+                <h3 id="order-history-title">Your Orders</h3>
                 <div id="order-history-list"></div>
             </div>
         </div>
