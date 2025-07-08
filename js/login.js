@@ -1,11 +1,10 @@
+// frontend/js/login.js
 document.addEventListener('DOMContentLoaded', () => {
-  
-  const API_BASE_URL = 'https://grocy-backend.onrender.com'; // **यहाँ अपना Render URL डालें**
     const loginForm = document.getElementById('login-form');
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
+        console.log('Login form submitted.');
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
@@ -17,16 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
+            console.log('Data received from server:', data);
 
-            if (response.ok) {
-                // **यह सबसे ज़रूरी हिस्सा है**
-                // हम यूजर की पूरी जानकारी (नाम, ईमेल, आदि) और टोकन दोनों को सेव करेंगे
+            if (response.ok && data.token) {
+                console.log('Login successful, saving to localStorage...');
                 localStorage.setItem('userInfo', JSON.stringify(data));
+                console.log('Saved to localStorage. Redirecting to index.html...');
                 window.location.href = 'index.html';
             } else {
-                throw new Error(data.message);
+                throw new Error(data.message || 'Login failed');
             }
         } catch (error) {
+            console.error('FATAL: Login request failed.', error);
             alert(`Error: ${error.message}`);
         }
     });

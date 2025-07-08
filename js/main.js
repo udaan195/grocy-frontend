@@ -24,28 +24,38 @@
 
     // --- 3. सभी फंक्शन्स ---
 
-    function updateUserHeader() {
-    if (!accountLink) return;
+    // frontend/js/main.js के अंदर
+function updateUserHeader() {
+    console.log('updateUserHeader function called.');
+    const accountLink = document.querySelector('a.header-icon[href*="login.html"], a.header-icon[href*="profile.html"]'); 
+    if (!accountLink) {
+        console.log('Account link not found.');
+        return;
+    }
 
-    // localStorage se data nikalein
     const userInfoString = localStorage.getItem('userInfo');
-    
-    // Check karein ki data hai ya nahi
+    console.log('Reading from localStorage:', userInfoString);
+
     if (userInfoString) {
         try {
             const userInfo = JSON.parse(userInfoString);
-            
-            // Ab check karein ki data ke andar token hai ya nahi
             if (userInfo && userInfo.token) {
-                const userRole = userInfo.role || 'customer';
-                accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userInfo.name.split(' ')[0]} (${userRole})</span>`;
+                console.log('Token found in userInfo. Updating header for logged-in user.');
+                const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
+                accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
                 accountLink.href = 'profile.html';
-                return; // Function ko yahin rok dein
+                return;
             }
-        } catch (error) {
-            console.error("Failed to parse userInfo from localStorage", error);
+        } catch (e) {
+            console.error('Error parsing userInfo from localStorage:', e);
         }
     }
+
+    console.log('No valid token found. Setting header for logged-out user.');
+    accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
+    accountLink.href = 'login.html';
+}
+
 
     // Agar upar ki koi bhi condition poori nahi hui, to user ko logged-out maanein
     accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
