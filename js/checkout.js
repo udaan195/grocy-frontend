@@ -8,37 +8,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const shippingForm = document.getElementById('shipping-form');
     const checkoutContainer = document.getElementById('checkout-container');
     const successMessage = document.getElementById('success-message');
+    
+    // Address fields
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const addressInput = document.getElementById('address');
+    const areaInput = document.getElementById('area');
+    const landmarkInput = document.getElementById('landmark');
     const pincodeInput = document.getElementById('pincode');
     const cityInput = document.getElementById('city');
     const stateInput = document.getElementById('state');
     const useLocationBtn = document.getElementById('use-location-btn');
-    const addressInput = document.getElementById('address');
-    const areaInput = document.getElementById('area');
-
+    
     // --- localStorage से डेटा निकालें ---
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const productsData = JSON.parse(localStorage.getItem('productsData')) || [];
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
-    // --- Guard Clauses: ज़रूरी जांच ---
-    if (!userInfo || !userInfo.token) {
-        alert('Please log in to proceed.');
-        window.location.href = 'login.html';
-        return;
-    }
-    if (cart.length === 0 || productsData.length === 0) {
-        if (checkoutContainer) {
-            checkoutContainer.innerHTML = '<h2>Your cart is empty. <a href="index.html">Continue shopping</a>.</h2>';
+    // --- Main Initializer Function ---
+    async function initializeCheckout() {
+        if (!userInfo || !userInfo.token) {
+            alert('Please log in to proceed.');
+            window.location.href = 'login.html';
+            return;
         }
-        return;
+        if (cart.length === 0) {
+            if(checkoutContainer) checkoutContainer.innerHTML = '<h2>Your cart is empty. <a href="index.html">Continue shopping</a>.</h2>';
+            return;
+        }
+
+        try {
+            // सर्वर से कार्ट में मौजूद प्रोडक्ट्स की ताज़ा और सही जानकारी माँगें
+            const productIds = cart.map(item => item.productId);
+            const response = await fetch(`${API_BASE_URL}/api/products/byIds`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: productIds })
+            });
+
+            if (!response.ok) throw new Error('Could not fetch product details.');
+            
+            const productsDataFromServer = await response.json();
+            
+            // कार्ट को क्लीन और वैलिडेट करें
+            const validatedCart = cart.filter(cartItem => 
+                productsDataFromServer.some(p => p._id === cartItem.productId)
+            );
+            
+            if (validatedCart.length !== cart.length) {
+                alert('Some items in your cart were no longer available and have been automatically removed. Please review your order.');
+                localStorage.setItem('cart', JSON.stringify(validatedCart));
+                window.location.reload(); // पेज को रीलोड करें ताकि सही कार्ट दिखे
+                return;
+            }
+
+            // अब पेज को रेंडर करें और इवेंट्स सेट करें
+            renderOrderSummary(validatedCart, productsDataFromServer);
+            prefillShippingForm();
+            setupEventListeners(validatedCart, productsDataFromServer);
+
+        } catch (error) {
+            if(checkoutContainer) checkoutContainer.innerHTML = `<h2>An error occurred: ${error.message}</h2>`;
+        }
     }
 
-    // --- Main Functions ---
+    // --- Helper Functions ---
 
-    function renderOrderSummary() {
+    function renderOrderSummary(currentCart, productsData) {
         let totalAmount = 0;
         summaryItemsDiv.innerHTML = '';
-        cart.forEach(cartItem => {
+        currentCart.forEach(cartItem => {
             const product = productsData.find(p => p._id === cartItem.productId);
             if (product) {
                 const itemTotal = product.price * cartItem.quantity;
@@ -61,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function prefillShippingForm() {
         if (shippingForm && userInfo) {
-            document.getElementById('name').value = userInfo.name || '';
-            document.getElementById('email').value = userInfo.email || '';
-            document.getElementById('phone').value = userInfo.phone || '';
+            nameInput.value = userInfo.name || '';
+            emailInput.value = userInfo.email || '';
+            phoneInput.value = userInfo.phone || '';
             addressInput.value = userInfo.address || '';
             cityInput.value = userInfo.city || '';
             pincodeInput.value = userInfo.pincode || '';
@@ -80,13 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const postOffice = data[0].PostOffice[0];
                     cityInput.value = postOffice.District;
                     stateInput.value = postOffice.State;
-                } else {
-                    cityInput.value = '';
-                    stateInput.value = '';
                 }
-            } catch (error) {
-                console.error('Pincode fetch error:', error);
-            }
+            } catch (error) { console.error('Pincode fetch error:', error); }
         }
     }
 
@@ -117,52 +151,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 useLocationBtn.innerHTML = '<i class="fa fa-map-marker-alt"></i> Use my current location';
                 useLocationBtn.disabled = false;
             });
-        } else {
-            alert('Geolocation is not supported by this browser.');
-        }
+        } else { alert('Geolocation is not supported by this browser.'); }
     }
     
-    async function handlePlaceOrder(event) {
+    async function handlePlaceOrder(event, currentCart, productsData) {
         event.preventDefault();
         const submitBtn = shippingForm.querySelector('button[type="submit"]');
+        if (!shippingForm.checkValidity()) {
+            alert('Please fill all required fields.');
+            shippingForm.reportValidity();
+            return;
+        }
+
         submitBtn.disabled = true;
         submitBtn.innerText = 'Processing...';
 
-        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-        const totalAmount = parseFloat(summaryTotalSpan.innerText);
-
         const orderPayload = {
-            orderItems: cart.map(item => {
+            orderItems: currentCart.map(item => {
                 const product = productsData.find(p => p._id === item.productId);
                 return { name: product.name, image: product.image, quantity: item.quantity, price: product.price, product: item.productId };
             }),
             shippingAddress: {
-                fullName: document.getElementById('name').value,
+                fullName: nameInput.value,
                 address: addressInput.value,
                 area: areaInput.value,
+                landmark: landmarkInput.value,
                 city: cityInput.value,
                 pincode: pincodeInput.value,
                 state: stateInput.value,
-                phone: document.getElementById('phone').value,
+                phone: phoneInput.value,
             },
-            paymentMethod: selectedPaymentMethod,
-            totalAmount: totalAmount,
+            paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+            totalAmount: parseFloat(summaryTotalSpan.innerText),
         };
-
+        
         try {
-            if (selectedPaymentMethod === 'COD') {
-                await saveOrderToDb(orderPayload);
-                showSuccessMessage();
-            } else if (selectedPaymentMethod === 'Online') {
-                await handleRazorpayPayment(orderPayload);
-            }
-        } catch (error) {
-            alert(`An error occurred: ${error.message}`);
+            await saveOrderToDb(orderPayload);
+            showSuccessMessage();
+        } catch(error) {
+            alert(`Order placement failed: ${error.message}`);
             submitBtn.disabled = false;
             submitBtn.innerText = 'Place Order';
         }
     }
-    
+
     async function saveOrderToDb(orderPayload) {
         const response = await fetch(`${API_BASE_URL}/api/orders`, {
             method: 'POST',
@@ -173,68 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Could not save your order.');
         }
-        return await response.json();
     }
 
-    async function handleRazorpayPayment(orderPayload) {
-        try {
-            const keyResponse = await fetch(`${API_BASE_URL}/api/payment/getkey`);
-            const { key } = await keyResponse.json();
-
-            const orderResponse = await fetch(`${API_BASE_URL}/api/payment/orders`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userInfo.token}` },
-                body: JSON.stringify({ amount: orderPayload.totalAmount }),
-            });
-            const { data: razorpayOrder } = await orderResponse.json();
-
-            const options = {
-                key,
-                amount: razorpayOrder.amount,
-                currency: "INR",
-                name: "Grocy",
-                order_id: razorpayOrder.id,
-                handler: async function (response) {
-                    const verificationBody = { ...response };
-                    const verificationResponse = await fetch(`${API_BASE_URL}/api/payment/verify`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(verificationBody),
-                    });
-                    if (!verificationResponse.ok) throw new Error('Payment verification failed.');
-                    
-                    orderPayload.isPaid = true;
-                    orderPayload.paidAt = new Date();
-                    orderPayload.paymentResult = { id: response.razorpay_payment_id, status: 'completed' };
-                    await saveOrderToDb(orderPayload);
-                    showSuccessMessage();
-                },
-                prefill: {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    contact: document.getElementById('phone').value,
-                },
-                theme: { color: '#28a745' }
-            };
-            const rzp = new window.Razorpay(options);
-            rzp.on('payment.failed', (response) => {
-                alert(`Payment failed: ${response.error.description}`);
-            });
-            rzp.open();
-        } catch (error) {
-            throw error; // Re-throw error to be caught by handlePlaceOrder
-        }
-    }
-    
     function showSuccessMessage() {
         localStorage.removeItem('cart');
-        localStorage.removeItem('productsData');
-        checkoutContainer.style.display = 'none';
-        successMessage.style.display = 'block';
+        if(checkoutContainer) checkoutContainer.style.display = 'none';
+        if(successMessage) successMessage.style.display = 'block';
+    }
+    
+    function setupEventListeners(validCart, productsData) {
+        if (shippingForm) shippingForm.addEventListener('submit', (event) => handlePlaceOrder(event, validCart, productsData));
+        if (pincodeInput) pincodeInput.addEventListener('input', handlePincodeLookup);
+        if (useLocationBtn) useLocationBtn.addEventListener('click', handleGeolocation);
     }
 
-    // --- Initial Load & Event Listeners ---
-    renderOrderSummary();
-    prefillShippingForm();
-    if (shippingForm) shippingForm.addEventListener('submit', handlePlaceOrder);
-    if (pincodeInput) pincodeInput.addEventListener('input', handlePincodeLookup);
-    if (useLocationBtn) useLocationBtn.addEventListener('click', handleGeolocation);
+    // --- Start the process ---
+    initializeCheckout();
 });
