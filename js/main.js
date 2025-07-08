@@ -1,26 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // सबसे ऊपर यह लाइन जोड़ें
-    const API_BASE_URL = 'https://grocy-backend.onrender.com';
-    
     // --- 1. सभी ज़रूरी एलिमेंट्स को पकड़ना ---
+    const API_BASE_URL = 'https://grocy-backend.onrender.com';
     const productListDiv = document.getElementById('product-list');
     const searchForm = document.querySelector('.search-bar');
     const searchInput = document.querySelector('.search-bar input');
     const categoriesDiv = document.querySelector('.categories');
-    
     const cartPopup = document.getElementById('cart-popup');
     const cartIconBtn = document.getElementById('cart-icon-btn');
     const closeCartBtn = document.getElementById('close-cart-btn');
     const cartItemsDiv = document.getElementById('cart-items');
     const cartTotalSpan = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('checkout-btn');
-    
-    const accountLink = document.querySelector('a.header-icon[href*="login.html"], a.header-icon[href*="profile.html"]'); 
+    const accountLink = document.querySelector('a.header-icon');
 
     // --- 2. वेरिएबल्स ---
-    let productsData = []; 
-    let cart = []; 
-    
+    let productsData = [];
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
     // --- 3. सभी फंक्शन्स ---
 
     function updateUserHeader() {
@@ -32,50 +28,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userInfo = JSON.parse(userInfoString);
                 if (userInfo && userInfo.token) {
                     const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
-                    const userRole = userInfo.role || 'customer';
-                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName} (${userRole})</span>`;
-                    accountLink.href = 'profile.html'; 
-                    return;
+                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
+                    accountLink.href = 'profile.html';
+                    return; // फंक्शन को यहीं रोक दें
                 }
             } catch (e) {
-                console.error("Error parsing userInfo from localStorage:", e);
+                console.error("Error parsing userInfo:", e);
                 localStorage.removeItem('userInfo'); // खराब डेटा को हटा दें
             }
         }
-        // अगर ऊपर की कोई भी कंडीशन पूरी नहीं हुई, तो यूज़र को लॉग-आउट मानें
+        // अगर ऊपर कुछ भी काम नहीं किया, तो लॉग-आउट दिखाएँ
         accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
-        accountLink.href = 'login.html'; 
+        accountLink.href = 'login.html';
     }
 
     const fetchProducts = async (keyword = '', category = 'All') => {
-        if(!productListDiv) return;
+        if (!productListDiv) return;
         productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-        
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const token = userInfo ? userInfo.token : null;
-
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
         try {
             let url = `${API_BASE_URL}/api/products?keyword=${keyword}`;
             if (category && category !== 'All') {
                 url += `&category=${category}`;
             }
-            const response = await fetch(url, { headers: headers });
-            if (!response.ok) throw new Error(`HTTP error!`);
-            const products = await response.json();
-            productsData = products;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Could not load products');
+            productsData = await response.json();
             renderProducts();
         } catch (error) {
-            productListDiv.innerHTML = '<p>Could not load products. Is the backend server running?</p>';
+            productListDiv.innerHTML = '<p>Could not load products. Please try again later.</p>';
         }
     };
 
     function renderProducts() {
-        if(!productListDiv) return;
+        if (!productListDiv) return;
         productListDiv.innerHTML = '';
         if (!productsData || productsData.length === 0) {
             productListDiv.innerHTML = '<p>No products found.</p>';
@@ -91,10 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="product-info">
                         <h3>${product.name}</h3>
-                        <p class="price">
-                            ₹${product.price} 
-                            ${product.unit ? `<span class="unit-text">(${product.unit})</span>` : ''}
-                        </p>
+                        <p class="price">₹${product.price} ${product.unit ? `<span class="unit-text">(${product.unit})</span>` : ''}</p>
                     </div>
                 </a>
                 <button data-product-id="${product._id}">Add to Cart</button>
@@ -103,8 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function updateCart() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
     function renderCart() {
-        if(!cartItemsDiv) return;
+        if (!cartItemsDiv) return;
         cartItemsDiv.innerHTML = '';
         if (cart.length === 0) {
             cartItemsDiv.innerHTML = '<p style="text-align:center; color:#777;">Your cart is empty.</p>';
@@ -114,7 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (product) {
                     const cartItemElement = document.createElement('div');
                     cartItemElement.className = 'cart-item';
-                    cartItemElement.innerHTML = `<span class="cart-item-name">${product.name} ${product.unit ? `(${product.unit})` : ''}</span><div class="cart-item-controls"><button class="btn-decrease" data-product-id="${product._id}">-</button><span class="cart-item-quantity">${cartItem.quantity}</span><button class="btn-increase" data-product-id="${product._id}">+</button><span class="cart-item-price">₹${product.price * cartItem.quantity}</span></div>`;
+                    cartItemElement.innerHTML = `
+                        <span class="cart-item-name">${product.name}</span>
+                        <div class="cart-item-controls">
+                            <button class="btn-decrease" data-product-id="${product._id}">-</button>
+                            <span class="cart-item-quantity">${cartItem.quantity}</span>
+                            <button class="btn-increase" data-product-id="${product._id}">+</button>
+                            <span class="cart-item-price">₹${(product.price * cartItem.quantity).toFixed(2)}</span>
+                        </div>`;
                     cartItemsDiv.appendChild(cartItemElement);
                 }
             });
@@ -127,101 +121,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addToCart(productId) {
-        const product = productsData.find(p => p._id === productId);
-        if (!product) return;
-
-        const minQty = product.minBuyQuantity || 1;
-        const maxQty = product.maxBuyQuantity;
         const existingItem = cart.find(item => item.productId === productId);
-
         if (existingItem) {
-            if (maxQty && (existingItem.quantity + 1) > maxQty) {
-                alert(`You can only buy a maximum of ${maxQty} units of this item.`);
-                return;
-            }
             existingItem.quantity++;
         } else {
-            if (minQty > 1) {
-                alert(`This item has a minimum purchase quantity of ${minQty}. Adding ${minQty} to your cart.`);
-            }
-            cart.push({ productId: productId, quantity: minQty });
+            cart.push({ productId: productId, quantity: 1 });
         }
-        renderCart();
+        updateCart();
+    }
+
+    function handleCartQuantityChange(productId, change) {
+        const cartItem = cart.find(item => item.productId === productId);
+        if (!cartItem) return;
+
+        if (change === -1) {
+            cartItem.quantity--;
+            if (cartItem.quantity <= 0) {
+                cart = cart.filter(item => item.productId !== productId);
+            }
+        } else if (change === 1) {
+            cartItem.quantity++;
+        }
+        updateCart();
     }
 
     // --- 4. सभी इवेंट लिस्नर्स ---
-    if(productListDiv) {
-        productListDiv.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON' && event.target.hasAttribute('data-product-id')) {
-                addToCart(event.target.getAttribute('data-product-id'));
+    if (productListDiv) {
+        productListDiv.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                addToCart(e.target.dataset.productId);
             }
         });
     }
-
-    if(cartItemsDiv) {
-        cartItemsDiv.addEventListener('click', (event) => {
-            const target = event.target;
-            const productId = target.getAttribute('data-product-id');
-            if (!productId) return;
-            const product = productsData.find(p => p._id === productId);
-            const cartItem = cart.find(item => item.productId === productId);
-            if (!cartItem || !product) return;
-
-            const minQty = product.minBuyQuantity || 1;
-            const maxQty = product.maxBuyQuantity;
-
-            if (target.classList.contains('btn-increase')) {
-                if (maxQty && (cartItem.quantity + 1) > maxQty) {
-                    alert(`You can only buy a maximum of ${maxQty} units.`);
-                    return;
-                }
-                cartItem.quantity++;
+    if (cartItemsDiv) {
+        cartItemsDiv.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-increase')) {
+                handleCartQuantityChange(e.target.dataset.productId, 1);
+            } else if (e.target.classList.contains('btn-decrease')) {
+                handleCartQuantityChange(e.target.dataset.productId, -1);
             }
-            if (target.classList.contains('btn-decrease')) {
-                if (cartItem.quantity <= minQty) {
-                    cart = cart.filter(item => item.productId !== productId);
-                    alert(`Item with minimum quantity of ${minQty} removed from cart.`);
-                } else {
-                    cartItem.quantity--;
-                }
-            }
-            renderCart();
         });
     }
-    
-    if(searchForm) {
-        searchForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const activeCategory = document.querySelector('.categories a.active').textContent;
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const activeCategory = document.querySelector('.categories a.active')?.textContent || 'All';
             fetchProducts(searchInput.value, activeCategory);
         });
     }
-
-    if(categoriesDiv) {
-        categoriesDiv.addEventListener('click', (event) => {
-            if (event.target.tagName === 'A') {
-                event.preventDefault();
-                const category = event.target.textContent;
+    if (categoriesDiv) {
+        categoriesDiv.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
                 document.querySelectorAll('.categories a').forEach(a => a.classList.remove('active'));
-                event.target.classList.add('active');
-                searchInput.value = '';
-                fetchProducts('', category);
+                e.target.classList.add('active');
+                fetchProducts('', e.target.textContent);
             }
         });
     }
-    
-    if(cartIconBtn) cartIconBtn.addEventListener('click', () => { cartPopup.classList.add('open'); });
-    if(closeCartBtn) closeCartBtn.addEventListener('click', () => { cartPopup.classList.remove('open'); });
-
-    if(checkoutBtn) {
+    if (cartIconBtn) cartIconBtn.addEventListener('click', () => cartPopup.classList.add('open'));
+    if (closeCartBtn) closeCartBtn.addEventListener('click', () => cartPopup.classList.remove('open'));
+    if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            if (userInfo) {
+            if (localStorage.getItem('userInfo')) {
                 if (cart.length > 0) {
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    localStorage.setItem('productsData', JSON.stringify(productsData));
                     window.location.href = 'checkout.html';
-                } else { alert('Your cart is empty!'); }
+                } else {
+                    alert('Your cart is empty!');
+                }
             } else {
                 alert('Please login to proceed to checkout.');
                 window.location.href = 'login.html';
@@ -232,4 +199,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. शुरुआती लोड ---
     updateUserHeader();
     fetchProducts();
+    renderCart(); // कार्ट को पेज लोड पर भी रेंडर करें
 });
