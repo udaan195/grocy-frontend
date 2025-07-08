@@ -1,7 +1,7 @@
-
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     // सबसे ऊपर यह लाइन जोड़ें
-    const API_BASE_URL = 'https://grocy-backend.onrender.com'; // **यहाँ अपना Render URL डालें**
+    const API_BASE_URL = 'https://grocy-backend.onrender.com';
+    
     // --- 1. सभी ज़रूरी एलिमेंट्स को पकड़ना ---
     const productListDiv = document.getElementById('product-list');
     const searchForm = document.querySelector('.search-bar');
@@ -20,86 +20,59 @@
     // --- 2. वेरिएबल्स ---
     let productsData = []; 
     let cart = []; 
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-
+    
     // --- 3. सभी फंक्शन्स ---
 
-    // frontend/js/main.js के अंदर
-function updateUserHeader() {
-    console.log('updateUserHeader function called.');
-    const accountLink = document.querySelector('a.header-icon[href*="login.html"], a.header-icon[href*="profile.html"]'); 
-    if (!accountLink) {
-        console.log('Account link not found.');
-        return;
-    }
+    function updateUserHeader() {
+        if (!accountLink) return;
+        const userInfoString = localStorage.getItem('userInfo');
 
-    const userInfoString = localStorage.getItem('userInfo');
-    console.log('Reading from localStorage:', userInfoString);
-
-    if (userInfoString) {
-        try {
-            const userInfo = JSON.parse(userInfoString);
-            if (userInfo && userInfo.token) {
-                console.log('Token found in userInfo. Updating header for logged-in user.');
-                const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
-                accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
-                accountLink.href = 'profile.html';
-                return;
+        if (userInfoString) {
+            try {
+                const userInfo = JSON.parse(userInfoString);
+                if (userInfo && userInfo.token) {
+                    const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
+                    const userRole = userInfo.role || 'customer';
+                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName} (${userRole})</span>`;
+                    accountLink.href = 'profile.html'; 
+                    return;
+                }
+            } catch (e) {
+                console.error("Error parsing userInfo from localStorage:", e);
+                localStorage.removeItem('userInfo'); // खराब डेटा को हटा दें
             }
-        } catch (e) {
-            console.error('Error parsing userInfo from localStorage:', e);
         }
+        // अगर ऊपर की कोई भी कंडीशन पूरी नहीं हुई, तो यूज़र को लॉग-आउट मानें
+        accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
+        accountLink.href = 'login.html'; 
     }
 
-    console.log('No valid token found. Setting header for logged-out user.');
-    accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
-    accountLink.href = 'login.html';
-}
+    const fetchProducts = async (keyword = '', category = 'All') => {
+        if(!productListDiv) return;
+        productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+        
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const token = userInfo ? userInfo.token : null;
 
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
-    // Agar upar ki koi bhi condition poori nahi hui, to user ko logged-out maanein
-    accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
-    accountLink.href = 'login.html';
-}
-
-
-
-   const fetchProducts = async (keyword = '', category = 'All') => {
-    if(!productListDiv) return;
-    productListDiv.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-    
-    // User ki info aur token nikalein
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-    const token = userInfo ? userInfo.token : null;
-
-    // Headers object banayein
-    const headers = {
-        'Content-Type': 'application/json',
+        try {
+            let url = `${API_BASE_URL}/api/products?keyword=${keyword}`;
+            if (category && category !== 'All') {
+                url += `&category=${category}`;
+            }
+            const response = await fetch(url, { headers: headers });
+            if (!response.ok) throw new Error(`HTTP error!`);
+            const products = await response.json();
+            productsData = products;
+            renderProducts();
+        } catch (error) {
+            productListDiv.innerHTML = '<p>Could not load products. Is the backend server running?</p>';
+        }
     };
-
-    // Agar token hai, to usko headers mein daalein
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    try {
-        let url = `${API_BASE_URL}/api/products?keyword=${keyword}`;
-        if (category && category !== 'All') {
-            url += `&category=${category}`;
-        }
-
-        // fetch call mein headers ka istemal karein
-        const response = await fetch(url, { headers: headers });
-
-        if (!response.ok) throw new Error(`HTTP error!`);
-        const products = await response.json();
-        productsData = products;
-        renderProducts();
-    } catch (error) {
-        productListDiv.innerHTML = '<p>Could not load products. Is the backend server running?</p>';
-    }
-};
-
 
     function renderProducts() {
         if(!productListDiv) return;
@@ -242,6 +215,7 @@ function updateUserHeader() {
 
     if(checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             if (userInfo) {
                 if (cart.length > 0) {
                     localStorage.setItem('cart', JSON.stringify(cart));
