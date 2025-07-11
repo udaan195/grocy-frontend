@@ -1,64 +1,56 @@
-// frontend/js/auth.js (Master Authentication Script)
-
+// frontend/js/auth.js (Universal Authentication Script)
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    // यह IDs आपके सभी HTML पेजों के हेडर में होनी चाहिए
+    // हेडर के एलिमेंट्स जो हर पेज पर होंगे
     const accountLink = document.getElementById('account-link');
-    const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtn = document.getElementById('logout-btn'); // यह बटन अब प्रोफाइल और डैशबोर्ड पेज के अंदर होगा
 
-    // --- Main Functions ---
+    // 1. हेडर को अपडेट करने का फंक्शन
     function updateUserHeader() {
-        if (!accountLink || !logoutBtn) {
-            console.error('Header elements (account-link or logout-btn) not found!');
-            return;
-        }
+        if (!accountLink) return;
 
         const userInfoString = localStorage.getItem('userInfo');
-
         if (userInfoString) {
             try {
                 const userInfo = JSON.parse(userInfoString);
                 if (userInfo && userInfo.token) {
-                    // --- User is Logged In ---
+                    // --- यूज़र लॉग-इन है ---
                     const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
+                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>Hi, ${userName}</span>`;
                     
-                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
-                    
+                    // रोल के हिसाब से सही पेज का लिंक दें
                     if (userInfo.role === 'admin' || userInfo.role === 'vendor') {
                         accountLink.href = 'dashboard.html';
                     } else {
                         accountLink.href = 'profile.html';
                     }
-                    
-                    logoutBtn.style.display = 'inline-block'; // लॉग-आउट बटन दिखाएँ
-                    return;
+                    return; // यहाँ काम खत्म
                 }
             } catch (e) {
-                console.error("Corrupted user info in localStorage:", e);
-                localStorage.removeItem('userInfo'); // खराब डेटा को हटा दें
+                // अगर userInfo में कोई गड़बड़ है, तो उसे हटा दें
+                localStorage.removeItem('userInfo');
             }
         }
-
-        // --- User is Logged Out ---
+        
+        // --- यूज़र लॉग-आउट है ---
         accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Login / Register</span>`;
         accountLink.href = 'login.html';
-        logoutBtn.style.display = 'none'; // लॉग-आउट बटन छिपाएँ
     }
 
+    // 2. लॉग-आउट करने का फंक्शन
     function handleLogout() {
         if (confirm('Are you sure you want to log out?')) {
             localStorage.removeItem('userInfo');
-            localStorage.removeItem('cart'); // कार्ट भी साफ़ कर दें
+            localStorage.removeItem('cart');
             alert('You have been logged out.');
             window.location.href = 'index.html';
         }
     }
 
-    // --- Event Listeners ---
+    // 3. अगर पेज पर लॉग-आउट बटन है, तो उस पर क्लिक का लॉजिक जोड़ें
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
 
-    // --- Initial Load ---
+    // 4. पेज लोड होते ही हेडर को अपडेट करें
     updateUserHeader();
 });
