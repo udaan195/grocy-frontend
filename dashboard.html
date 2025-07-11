@@ -3,39 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Grocy</title>
-    <link rel="stylesheet" href="css/style.css"> <link rel="stylesheet" href="css/dashboard.css"> </head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
 <body>
-    <header>
-        <h1>My Dashboard</h1>
-    </header>
-
+    <header><h1>My Dashboard</h1></header>
     <main class="dashboard-container">
-        <section id="add-product-section">
-            <h2>Add a New Product</h2>
-            <form id="add-product-form">
-                <input type="text" id="product-name" placeholder="Product Name" required>
-                <input type="number" id="product-price" placeholder="Price" required>
-                <input type="text" id="product-category" placeholder="Category" required>
-                <input type="text" id="product-image" placeholder="Image URL" required>
-                <input type="text" id="product-unit" placeholder="Unit (e.g., kg, L, piece)">
-                <button type="submit">Add Product</button>
-            </form>
-        </section>
+        
+        <div class="dashboard-menu">
+            <button id="show-products-btn" class="active">Manage Products</button>
+            <button id="show-orders-btn">View Orders</button>
+        </div>
 
-        <section id="my-products-section">
-            <h2>My Products</h2>
-            <div id="my-products-list" class="product-grid">
-                </div>
-        </section>
+        <div id="products-view">
+            <section id="add-product-section">
+                <h2>Add / Edit Product</h2>
+                <form id="add-product-form">
+                    <input type="hidden" id="product-id"> <input type="text" id="product-name" placeholder="Product Name" required>
+                    <textarea id="product-description" placeholder="Product Description" required></textarea>
+                    
+                    <select id="product-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Vegetables">Vegetables</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Dairy">Dairy</option>
+                    </select>
 
-        <section id="my-orders-section">
-            <h2>My Orders</h2>
-            <div id="my-orders-list">
-                </div>
-        </section>
+                    <input type="number" id="product-price" placeholder="Price" step="0.01" required>
+                    <input type="number" id="product-stock" placeholder="Stock Quantity" required>
+                    
+                    <select id="product-unit" required>
+                        <option value="">Select Unit</option>
+                        <option value="kg">kg</option>
+                        <option value="gm">gm</option>
+                        <option value="L">L</option>
+                        <option value="pcs">pcs</option>
+                    </select>
+
+                    <input type="number" id="product-pcs-count" placeholder="How many pieces?" style="display:none;">
+
+                    <input type="text" id="product-image" placeholder="Image URL" required>
+                    
+                    <button type="submit">Save Product</button>
+                </form>
+            </section>
+            
+            <section id="my-products-section">
+                <h2>My Products</h2>
+                <div id="my-products-list"></div>
+            </section>
+        </div>
+
+        <div id="orders-view" style="display:none;">
+            <section id="my-orders-section">
+                <h2>My Orders</h2>
+                <div id="my-orders-list"></div>
+            </section>
+        </div>
     </main>
-
     <script src="js/dashboard.js"></script>
 </body>
 </html>

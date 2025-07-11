@@ -1,105 +1,193 @@
-/* frontend/css/dashboard.css */
-
+/* --- General Body and Font Styles --- */
 body {
-    background-color: #f4f7f6;
-    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light grey background for a clean look */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #343a40;
+    line-height: 1.6;
 }
 
-header h1 {
-    text-align: center;
-    padding: 20px 0;
-    color: #333;
-}
-
+/* --- Main Dashboard Container --- */
 .dashboard-container {
-    max-width: 1200px;
-    margin: 20px auto;
+    max-width: 1400px;
+    margin: 30px auto;
     padding: 20px;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 280px 1fr; /* Fixed sidebar, flexible content */
     gap: 30px;
 }
 
-/* For larger screens, create two columns */
-@media (min-width: 992px) {
-    .dashboard-container {
-        grid-template-columns: 1fr 2fr; /* Left column is 1/3, right is 2/3 */
-    }
-    #add-product-section {
-        grid-row: span 2; /* Make the form span two rows */
-    }
+/* --- Navigation Menu --- */
+.dashboard-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    height: fit-content;
 }
 
-section {
-    background-color: #fff;
-    padding: 25px;
+.dashboard-menu button {
+    padding: 15px 20px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-menu button:hover {
+    background-color: #f1f3f5;
+    color: #000;
+}
+
+.dashboard-menu button.active {
+    background-color: #28a745; /* Primary Green */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* --- Content Sections --- */
+section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 section h2 {
     margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    color: #2c3e50;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 15px;
+    color: #212529;
+    font-size: 24px;
 }
 
-/* Form Styles */
+/* --- Form Styles --- */
 #add-product-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
+}
+
+#add-product-form input,
+#add-product-form select,
+#add-product-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#add-product-form input:focus,
+#add-product-form select:focus,
+#add-product-form textarea:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+#add-product-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+#add-product-form button[type="submit"] {
+    grid-column: 1 / -1;
+    padding: 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#add-product-form button[type="submit"]:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* --- Product & Order List Styles --- */
+#my-products-list, #my-orders-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-#add-product-form input[type="text"],
-#add-product-form input[type="number"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box; /* Important for padding */
-}
-
-#add-product-form button {
-    padding: 12px 20px;
-    background-color: #28a745; /* Green */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#add-product-form button:hover {
-    background-color: #218838; /* Darker Green */
-}
-
-/* Product List Styles */
-#my-products-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.product-card {
-    border: 1px solid #eee;
+.product-item-manage, .order-item-manage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    background-color: #fafafa;
+    transition: box-shadow 0.3s, transform 0.3s;
 }
 
-.product-card h3 {
-    margin: 10px 0 5px 0;
-    font-size: 1rem;
+.product-item-manage:hover, .order-item-manage:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-.product-card p {
+.product-item-manage p, .order-item-manage p {
     margin: 0;
-    color: #e74c3c;
-    font-weight: bold;
+}
+
+.product-item-manage button, .order-item-manage button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.edit-btn { background-color: #007bff; color: white; }
+.edit-btn:hover { background-color: #0056b3; }
+
+.delete-btn { background-color: #dc3545; color: white; }
+.delete-btn:hover { background-color: #c82333; }
+
+
+/* --- Responsive Design for Mobile --- */
+@media (max-width: 992px) {
+    .dashboard-container {
+        grid-template-columns: 1fr; /* Stack columns on mobile */
+    }
+    #add-product-form {
+        grid-template-columns: 1fr; /* Form fields stack on mobile */
+    }
 }
