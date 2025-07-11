@@ -1,28 +1,33 @@
 /* === DASHBOARD STYLES === */
 
-/* General Body & Layout */
+/* frontend/css/dashboard.css (Improved Version) */
 body {
     background-color: #f8f9fa;
-    font-family: 'Segoe UI', sans-serif;
-    color: #343a40;
 }
 
 .dashboard-container {
     display: grid;
-    grid-template-columns: 260px 1fr; /* Sidebar and main content */
+    grid-template-columns: 280px 1fr;
     gap: 30px;
-    max-width: 1600px;
+    max-width: 1500px;
     margin: 30px auto;
     padding: 0 20px;
 }
 
-/* Sidebar Menu */
 .dashboard-menu {
-    background-color: #ffffff;
+    background: #fff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    height: fit-content; /* Sidebar height adjusts to content */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    height: fit-content;
+}
+
+#welcome-message {
+    font-size: 22px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .dashboard-menu button {
@@ -33,7 +38,7 @@ body {
     padding: 15px;
     margin-bottom: 10px;
     border: none;
-    background-color: #f8f9fa;
+    background-color: transparent;
     border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
@@ -44,34 +49,25 @@ body {
 }
 
 .dashboard-menu button:hover {
-    background-color: #e9ecef;
-    color: #000;
+    background-color: #f1f3f5;
 }
 
 .dashboard-menu button.active {
     background-color: #28a745;
     color: white;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
 }
 
-/* Content Sections */
 .dashboard-content section {
-    background-color: #ffffff;
+    background: #fff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     margin-bottom: 30px;
 }
 
-.dashboard-content h2 {
-    font-size: 28px;
-    color: #212529;
-    margin-top: 0;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #dee2e6;
-}
+/* ... बाकी का CSS (फॉर्म, लिस्ट, आदि) जैसा था वैसा ही रहेगा ... */
+
 
 /* Form Styling */
 #add-product-form {

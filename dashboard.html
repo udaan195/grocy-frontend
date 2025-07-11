@@ -3,79 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <title>Dashboard - Grocy</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="css/dashboard.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-    <script src="js/auth.js"></script>
-
-    <script src="js/main.js"></script> <script src="js/dashboard.js"></script> </body>
-</html>
-
 <body>
-    <header><h1>My Dashboard</h1></header>
-    <main class="dashboard-container">
-        
-        <div class="dashboard-menu">
-    <button id="show-products-btn" class="active">Manage Products</button>
-    <button id="show-orders-btn">View Orders</button>
-    
-    <hr>
-    <button id="logout-btn-dashboard">
-        <i class="fa fa-sign-out-alt"></i> Logout
-    </button>
-</div>
 
-
-        <div id="products-view">
-            <section id="add-product-section">
-                <h2>Add / Edit Product</h2>
-                <form id="add-product-form">
-                    <input type="hidden" id="product-id"> <input type="text" id="product-name" placeholder="Product Name" required>
-                    <textarea id="product-description" placeholder="Product Description" required></textarea>
-                    
-                   <select id="product-category" required>
-    <option value="">Select Category</option>
-    <option value="Vegetables">Vegetables</option>
-    <option value="Fruits">Fruits</option>
-    <option value="Dairy">Dairy</option>
-    <option value="Snacks">Snacks</option>
-    <option value="Staples">Staples</option>
-    <option value="Beverages">Beverages</option>
-</select>
-
-
-                    <input type="number" id="product-price" placeholder="Price" step="0.01" required>
-                    <input type="number" id="product-stock" placeholder="Stock Quantity" required>
-                    
-                    <select id="product-unit" required>
-                        <option value="">Select Unit</option>
-                        <option value="kg">kg</option>
-                        <option value="gm">gm</option>
-                        <option value="L">L</option>
-                        <option value="pcs">pcs</option>
-                    </select>
-
-                    <input type="number" id="product-pcs-count" placeholder="How many pieces?" style="display:none;">
-
-                    <input type="text" id="product-image" placeholder="Image URL" required>
-                    
-                    <button type="submit">Save Product</button>
-                </form>
-            </section>
-            
-            <section id="my-products-section">
-                <h2>My Products</h2>
-                <div id="my-products-list"></div>
-            </section>
+    <header>
+        <div class="header-main">
+            <a href="index.html" class="logo-link">
+                <img src="logo.png" alt="Grocy Logo" class="logo">
+            </a>
+            <div class="header-right">
+                <a href="login.html" id="account-link" class="header-icon">
+                    <i class="fa fa-user-circle"></i>
+                    <span>Account</span>
+                </a>
+                <button id="logout-btn" class="header-icon" style="display:none;">
+                    <i class="fa fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
         </div>
+    </header>
 
-        <div id="orders-view" style="display:none;">
-            <section id="my-orders-section">
-                <h2>My Orders</h2>
-                <div id="my-orders-list"></div>
-            </section>
+    <main class="dashboard-container">
+        <aside class="dashboard-menu">
+            <h2 id="welcome-message">Welcome!</h2>
+            <button id="show-products-btn" class="active">
+                <i class="fa fa-box-open"></i>
+                <span>Manage Products</span>
+            </button>
+            <button id="show-orders-btn">
+                <i class="fa fa-receipt"></i>
+                <span>View Orders</span>
+            </button>
+        </aside>
+
+        <div class="dashboard-content">
+            <div id="products-view">
+                <section id="add-product-section">
+                    <h2>Add / Edit Product</h2>
+                    <form id="add-product-form">
+                        <input type="hidden" id="product-id">
+
+                        <div class="form-group full-width">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="product-description">Product Description</label>
+                            <textarea id="product-description" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-category">Category</label>
+                            <select id="product-category" required>
+                                <option value="">-- Select Category --</option>
+                                <option value="Vegetables">Vegetables</option>
+                                <option value="Fruits">Fruits</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Snacks">Snacks</option>
+                                <option value="Staples">Staples</option>
+                                <option value="Beverages">Beverages</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-price">Price (₹)</label>
+                            <input type="number" id="product-price" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-stock">Stock Quantity</label>
+                            <input type="number" id="product-stock" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-unit">Unit</label>
+                            <select id="product-unit" required>
+                                <option value="">-- Select Unit --</option>
+                                <option value="kg">kg</option>
+                                <option value="gm">gm</option>
+                                <option value="L">L</option>
+                                <option value="ml">ml</option>
+                                <option value="pcs">pcs</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="pcs-count-group" style="display:none;">
+                            <label for="product-pcs-count">Pieces Count (if unit is 'pcs')</label>
+                            <input type="number" id="product-pcs-count" min="1">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="product-image">Image URL</label>
+                            <input type="text" id="product-image" required>
+                        </div>
+                        
+                        <button type="submit" class="full-width">Save Product</button>
+                    </form>
+                </section>
+                
+                <section id="my-products-section">
+                    <h2>My Products List</h2>
+                    <div id="my-products-list">
+                        </div>
+                </section>
+            </div>
+
+            <div id="orders-view" style="display:none;">
+                <section id="my-orders-section">
+                    <h2>My Orders</h2>
+                    <div id="my-orders-list">
+                        </div>
+                </section>
+            </div>
         </div>
     </main>
-    <script src="js/dashboard.js"></script>
-</body>
+    
+    <script src="js/auth.js"></script> <script src="js/dashboard.js"></script> </body>
 </html>
