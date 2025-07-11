@@ -238,17 +238,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // frontend/js/dashboard.js के आखिर में यह जोड़ें
 
 // --- Logout Logic ---
-const logoutBtn = document.getElementById('logout-btn-dashboard');
-
-function handleLogout() {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('cart');
-    alert('You have been logged out.');
-    window.location.href = 'index.html';
-}
-
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
-}
 
 });
