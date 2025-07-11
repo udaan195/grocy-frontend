@@ -16,25 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let productsData = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    function updateUserHeader() {
-        if (!accountLink) return;
-        const userInfoString = localStorage.getItem('userInfo');
-        if (userInfoString) {
-            try {
-                const userInfo = JSON.parse(userInfoString);
-                if (userInfo && userInfo.token) {
-                    const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
-                    accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
-                    accountLink.href = 'profile.html';
-                    return;
-                }
-            } catch (e) {
-                localStorage.removeItem('userInfo');
+    // frontend/js/main.js
+function updateUserHeader() {
+    if (!accountLink) return;
+    const userInfoString = localStorage.getItem('userInfo');
+    if (userInfoString) {
+        const userInfo = JSON.parse(userInfoString);
+        if (userInfo && userInfo.token) {
+            const userName = userInfo.name ? userInfo.name.split(' ')[0] : 'User';
+            accountLink.innerHTML = `<i class="fa fa-user"></i><span>${userName}</span>`;
+            // अगर वेंडर या एडमिन है तो dashboard.html पर भेजो
+            if (userInfo.role === 'admin' || userInfo.role === 'vendor') {
+                accountLink.href = 'dashboard.html';
+            } else {
+                accountLink.href = 'profile.html';
             }
+            return;
         }
-        accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
-        accountLink.href = 'login.html';
     }
+    accountLink.innerHTML = `<i class="fa fa-user-circle"></i><span>Account</span>`;
+    accountLink.href = 'login.html';
+}
+
 
     async function fetchProducts(keyword = '', category = 'All') {
         if (!productListDiv) return;
