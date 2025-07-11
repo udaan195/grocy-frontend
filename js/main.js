@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.getElementById('checkout-btn');
 
     // --- State Variables ---
-    let allProducts = []; // सभी प्रोडक्ट्स की एक मास्टर लिस्ट
+    let allProducts = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || []; 
 
     // --- Main Functions ---
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_BASE_URL}/api/products`);
             if (!response.ok) throw new Error('Could not load products');
             allProducts = await response.json();
-            renderProducts(allProducts); // शुरू में सभी प्रोडक्ट्स दिखाएँ
+            renderProducts(allProducts);
         } catch (error) {
             productListDiv.innerHTML = '<p>Could not load products. Please try again later.</p>';
         }
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!productListDiv) return;
         productListDiv.innerHTML = '';
         if (productsToRender.length === 0) {
-            productListDiv.innerHTML = '<p>No products found for this selection.</p>';
+            productListDiv.innerHTML = '<p>No products found.</p>';
             return;
         }
         productsToRender.forEach(product => {
@@ -47,12 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'product-card';
             card.innerHTML = `
                 <a href="product.html?id=${product._id}" class="product-link">
-                    <div class="product-image-container">
-                        <img src="${product.image}" alt="${product.name}" class="product-image">
-                    </div>
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <h3>${product.name}</h3>
-                        <p class="price">₹${product.price} ${product.unit ? `<span class="unit-text">(${product.unit})</span>` : ''}</p>
+                        <p class="price">₹${product.price}</p>
                     </div>
                 </a>
                 <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
@@ -72,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cartItemsDiv) return;
         cartItemsDiv.innerHTML = '';
         if (cart.length === 0) {
-            cartItemsDiv.innerHTML = '<p style="text-align:center; color:#777;">Your cart is empty.</p>';
+            cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
         } else {
             cart.forEach(cartItem => {
                 const product = allProducts.find(p => p._id === cartItem.productId);
@@ -80,12 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const cartItemElement = document.createElement('div');
                     cartItemElement.className = 'cart-item';
                     cartItemElement.innerHTML = `
-                        <span class="cart-item-name">${product.name}</span>
+                        <span>${product.name}</span>
                         <div class="cart-item-controls">
                             <button class="btn-decrease" data-product-id="${product._id}">-</button>
-                            <span class="cart-item-quantity">${cartItem.quantity}</span>
+                            <span>${cartItem.quantity}</span>
                             <button class="btn-increase" data-product-id="${product._id}">+</button>
-                            <span class="cart-item-price">₹${(product.price * cartItem.quantity).toFixed(2)}</span>
                         </div>`;
                     cartItemsDiv.appendChild(cartItemElement);
                 }
@@ -98,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartTotalSpan.innerText = total.toFixed(2);
     }
 
-    // 5. कार्ट में आइटम जोड़ना
+    // --- Event Handlers ---
     function addToCart(productId) {
         const existingItem = cart.find(item => item.productId === productId);
         if (existingItem) {
@@ -107,10 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cart.push({ productId: productId, quantity: 1 });
         }
         updateCart();
-        alert('Product added to cart!');
     }
 
-    // 6. कार्ट में क्वांटिटी बदलना
     function handleCartQuantityChange(productId, change) {
         const cartItem = cart.find(item => item.productId === productId);
         if (!cartItem) return;
@@ -121,51 +116,32 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCart();
     }
     
-    // 7. सर्च और फ़िल्टर का लॉजिक
     function filterAndRenderProducts() {
         const keyword = searchInput.value.toLowerCase();
-        const activeCategoryElement = categoriesDiv.querySelector('a.active');
-        const category = activeCategoryElement ? activeCategoryElement.textContent : 'All';
-        
-        const filteredProducts = allProducts.filter(product => {
-            const matchesKeyword = product.name.toLowerCase().includes(keyword);
-            const matchesCategory = (category === 'All' || product.category === category);
-            return matchesKeyword && matchesCategory;
-        });
-        
+        const activeCategory = categoriesDiv.querySelector('a.active')?.textContent || 'All';
+        const filteredProducts = allProducts.filter(p => 
+            p.name.toLowerCase().includes(keyword) && 
+            (activeCategory === 'All' || p.category === activeCategory)
+        );
         renderProducts(filteredProducts);
     }
 
     // --- Event Listeners ---
-
-    // Add to Cart बटन के लिए
     if (productListDiv) {
         productListDiv.addEventListener('click', (e) => {
-            if (e.target.classList.contains('add-to-cart-btn')) {
-                addToCart(e.target.dataset.productId);
-            }
+            if (e.target.classList.contains('add-to-cart-btn')) addToCart(e.target.dataset.productId);
         });
     }
-    
-    // कार्ट में +/- बटन के लिए
     if (cartItemsDiv) {
         cartItemsDiv.addEventListener('click', (e) => {
-            const productId = e.target.dataset.productId;
-            if (e.target.classList.contains('btn-increase')) handleCartQuantityChange(productId, 1);
-            if (e.target.classList.contains('btn-decrease')) handleCartQuantityChange(productId, -1);
+            if (e.target.classList.contains('btn-increase')) handleCartQuantityChange(e.target.dataset.productId, 1);
+            if (e.target.classList.contains('btn-decrease')) handleCartQuantityChange(e.target.dataset.productId, -1);
         });
     }
-    
-    // सर्च बार के लिए
     if (searchForm) {
-        searchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            filterAndRenderProducts();
-        });
-        searchInput.addEventListener('keyup', filterAndRenderProducts); // टाइप करते ही सर्च करें
+        searchForm.addEventListener('submit', (e) => { e.preventDefault(); filterAndRenderProducts(); });
+        searchInput.addEventListener('keyup', filterAndRenderProducts);
     }
-
-    // कैटेगरी फ़िल्टर के लिए
     if (categoriesDiv) {
         categoriesDiv.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
@@ -176,28 +152,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-    // कार्ट पॉपअप खोलने/बंद करने के लिए
-    if (cartIconBtn) cartIconBtn.addEventListener('click', () => { cartPopup.classList.add('open'); });
-    if (closeCartBtn) closeCartBtn.addEventListener('click', () => { cartPopup.classList.remove('open'); });
-
-    // चेकआउट बटन के लिए
+    if (cartIconBtn) cartIconBtn.addEventListener('click', () => cartPopup.classList.add('open'));
+    if (closeCartBtn) closeCartBtn.addEventListener('click', () => cartPopup.classList.remove('open'));
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
             if (localStorage.getItem('userInfo')) {
-                if (cart.length > 0) {
-                    window.location.href = 'checkout.html';
-                } else {
-                    alert('Your cart is empty!');
-                }
+                if (cart.length > 0) window.location.href = 'checkout.html';
+                else alert('Your cart is empty!');
             } else {
-                alert('Please login to proceed to checkout.');
+                alert('Please login to proceed.');
                 window.location.href = 'login.html';
             }
         });
     }
 
     // --- Initial Page Load ---
-    fetchAllProducts(); // पेज लोड होते ही सभी प्रोडक्ट्स ले आओ
-    renderCart(); // अगर localStorage में पुराना कार्ट है तो दिखाओ
+    fetchAllProducts();
+    renderCart();
 });
