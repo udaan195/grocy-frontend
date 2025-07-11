@@ -9,7 +9,8 @@
 <body>
     <header class="profile-header">
         <div class="profile-header-container">
-            <a href="index.html"><img src="logo.png" alt="Gorcy Logo" class="logo"></a>
+            <a href="index.html"
+            id="account-link"><img src="logo.png" alt="Gorcy Logo" class="logo"></a>
             <h1>My Profile</h1>
             <a href="index.html" class="go-shopping-link">Go Shopping</a>
         </div>
@@ -49,11 +50,13 @@
                 </form>
             </div>
 
-            <!-- Order History Section (Hidden by default) -->
-            <div class="order-history" id="order-history-container" style="display:none;">
-                <h3 id="order-history-title">Your Orders</h3>
-                <div id="order-history-list"></div>
-            </div>
+<section class="order-history-section">
+    <h2>My Order History</h2>
+    <button id="view-orders-btn">View My Orders</button>
+    <div id="order-history-container" style="display:none;">
+        </div>
+</section>
+
         </div>
     </main>
     <script src="js/profile.js"></script>

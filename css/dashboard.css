@@ -1,83 +1,83 @@
-/* --- General Body and Font Styles --- */
+/* === DASHBOARD STYLES === */
+
+/* General Body & Layout */
 body {
-    background-color: #f8f9fa; /* Light grey background for a clean look */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
     color: #343a40;
-    line-height: 1.6;
 }
 
-/* --- Main Dashboard Container --- */
 .dashboard-container {
-    max-width: 1400px;
-    margin: 30px auto;
-    padding: 20px;
     display: grid;
-    grid-template-columns: 280px 1fr; /* Fixed sidebar, flexible content */
+    grid-template-columns: 260px 1fr; /* Sidebar and main content */
     gap: 30px;
+    max-width: 1600px;
+    margin: 30px auto;
+    padding: 0 20px;
 }
 
-/* --- Navigation Menu --- */
+/* Sidebar Menu */
 .dashboard-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     background-color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    height: fit-content;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    height: fit-content; /* Sidebar height adjusts to content */
 }
 
 .dashboard-menu button {
-    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
     border: none;
-    background-color: transparent;
-    cursor: pointer;
-    text-align: left;
+    background-color: #f8f9fa;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
     color: #495057;
-    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .dashboard-menu button:hover {
-    background-color: #f1f3f5;
+    background-color: #e9ecef;
     color: #000;
 }
 
 .dashboard-menu button.active {
-    background-color: #28a745; /* Primary Green */
+    background-color: #28a745;
     color: white;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
 }
 
-/* --- Content Sections --- */
-section {
+/* Content Sections */
+.dashboard-content section {
     background-color: #ffffff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
 }
 
-section h2 {
+.dashboard-content h2 {
+    font-size: 28px;
+    color: #212529;
     margin-top: 0;
     margin-bottom: 25px;
-    border-bottom: 1px solid #dee2e6;
     padding-bottom: 15px;
-    color: #212529;
-    font-size: 24px;
+    border-bottom: 1px solid #dee2e6;
 }
 
-/* --- Form Styles --- */
+/* Form Styling */
 #add-product-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 25px;
 }
 
 .form-group {
@@ -89,32 +89,24 @@ section h2 {
     margin-bottom: 8px;
     font-weight: 600;
     font-size: 14px;
-    color: #495057;
 }
 
-#add-product-form input,
-#add-product-form select,
-#add-product-form textarea {
-    width: 100%;
+.form-group input,
+.form-group select,
+.form-group textarea {
     padding: 12px 15px;
     border: 1px solid #ced4da;
     border-radius: 8px;
     font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-#add-product-form input:focus,
-#add-product-form select:focus,
-#add-product-form textarea:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
-}
-
-#add-product-form textarea {
-    min-height: 100px;
-    resize: vertical;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
 }
 
 .full-width {
@@ -124,70 +116,45 @@ section h2 {
 #add-product-form button[type="submit"] {
     grid-column: 1 / -1;
     padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
     background-color: #28a745;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s;
 }
 
 #add-product-form button[type="submit"]:hover {
     background-color: #218838;
-    transform: translateY(-2px);
 }
 
-/* --- Product & Order List Styles --- */
-#my-products-list, #my-orders-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.product-item-manage, .order-item-manage {
+/* Product & Order List Styling */
+.list-item-manage {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
     border: 1px solid #e9ecef;
     border-radius: 8px;
-    transition: box-shadow 0.3s, transform 0.3s;
+    margin-bottom: 15px;
+    transition: box-shadow 0.3s;
 }
 
-.product-item-manage:hover, .order-item-manage:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+.list-item-manage:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.product-item-manage p, .order-item-manage p {
-    margin: 0;
-}
+.list-item-manage p { margin: 0; }
+.list-item-manage .item-actions button { margin-left: 10px; }
 
-.product-item-manage button, .order-item-manage button {
-    margin-left: 10px;
-    padding: 8px 15px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.edit-btn { background-color: #007bff; color: white; }
-.edit-btn:hover { background-color: #0056b3; }
-
-.delete-btn { background-color: #dc3545; color: white; }
-.delete-btn:hover { background-color: #c82333; }
-
-
-/* --- Responsive Design for Mobile --- */
+/* Responsive for Mobile */
 @media (max-width: 992px) {
     .dashboard-container {
-        grid-template-columns: 1fr; /* Stack columns on mobile */
+        grid-template-columns: 1fr;
     }
     #add-product-form {
-        grid-template-columns: 1fr; /* Form fields stack on mobile */
+        grid-template-columns: 1fr;
     }
 }

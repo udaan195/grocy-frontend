@@ -1,114 +1,73 @@
+// frontend/js/profile.js (Final Code)
 document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://grocy-backend.onrender.com';
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
-    if (!userInfo) {
+    // --- DOM Elements ---
+    const nameSpan = document.getElementById('profile-name'); // मान लीजिए आपके पास यह IDs हैं
+    const emailSpan = document.getElementById('profile-email');
+    const viewOrdersBtn = document.getElementById('view-orders-btn');
+    const orderHistoryContainer = document.getElementById('order-history-container');
+
+    // --- Auth Guard ---
+    if (!userInfo || !userInfo.token) {
         window.location.href = 'login.html';
         return;
     }
 
-    // Elements
-    const nameSpan = document.getElementById('profile-name');
-    const emailSpan = document.getElementById('profile-email');
-    const addressSpan = document.getElementById('profile-address');
-    const adminPanelLink = document.getElementById('admin-panel-link');
-    const showVendorOrdersBtn = document.getElementById('show-vendor-orders-btn');
-    const showCustomerOrdersBtn = document.getElementById('show-customer-orders-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const editProfileBtn = document.getElementById('edit-profile-btn');
-    const editFormContainer = document.getElementById('edit-profile-form-container');
-    const editForm = document.getElementById('edit-profile-form');
-    const orderHistoryContainer = document.getElementById('order-history-container');
-    const orderHistoryTitle = document.getElementById('order-history-title');
-    const orderHistoryList = document.getElementById('order-history-list');
+    // --- Populate Profile Info ---
+    if (nameSpan) nameSpan.innerText = userInfo.name;
+    if (emailSpan) emailSpan.innerText = userInfo.email;
 
-    // Populate user data
-    nameSpan.innerText = userInfo.name;
-    emailSpan.innerText = userInfo.email;
-    const fullAddress = [userInfo.address, userInfo.city, userInfo.pincode].filter(Boolean).join(', ');
-    addressSpan.innerText = fullAddress || 'Not Provided';
-    
-    // Show/Hide Links based on Role
-    if (userInfo.role === 'admin') {
-        adminPanelLink.style.display = 'block';
-    } else if (userInfo.role === 'vendor') {
-        showVendorOrdersBtn.style.display = 'block';
-    } else {
-        showCustomerOrdersBtn.style.display = 'block';
-    }
+    // --- Event Listener ---
+    viewOrdersBtn.addEventListener('click', async () => {
+        viewOrdersBtn.innerText = 'Loading...';
+        viewOrdersBtn.disabled = true;
+        orderHistoryContainer.style.display = 'block';
+        orderHistoryContainer.innerHTML = '<p>Fetching your orders...</p>';
 
-    // Logout Button
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('userInfo');
-        window.location.href = 'index.html';
-    });
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/orders/myorders`, {
+                headers: {
+                    'Authorization': `Bearer ${userInfo.token}`
+                }
+            });
 
-    // Edit Profile Logic
-    editProfileBtn.addEventListener('click', () => {
-        editFormContainer.style.display = editFormContainer.style.display === 'none' ? 'block' : 'none';
-        if (editFormContainer.style.display === 'block') {
-            document.getElementById('edit-name').value = userInfo.name || '';
-            document.getElementById('edit-address').value = userInfo.address || '';
-            document.getElementById('edit-city').value = userInfo.city || '';
-            document.getElementById('edit-pincode').value = userInfo.pincode || '';
-        }
-    });
-    
-    editForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        // ... (Profile update logic remains the same)
-    });
-    
-    // Show Order History Logic
-    const handleShowOrders = async (role) => {
-        const isHidden = orderHistoryContainer.style.display === 'none';
-        orderHistoryContainer.style.display = isHidden ? 'block' : 'none';
-
-        if (isHidden) {
-            let url = '';
-            if (role === 'customer') {
-                orderHistoryTitle.innerText = 'My Purchase History';
-                url = 'http://localhost:3000/api/orders/myorders';
-            } else if (role === 'vendor') {
-                orderHistoryTitle.innerText = 'My Sales Orders';
-                url = 'http://localhost:3000/api/orders/vendor';
+            if (!response.ok) {
+                throw new Error('Could not fetch your orders.');
             }
 
-            orderHistoryList.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
-            try {
-                const response = await fetch(url, { headers: { 'Authorization': `Bearer ${userInfo.token}` } });
-                if (!response.ok) throw new Error('Could not fetch orders.');
-                const orders = await response.json();
-                renderOrders(orders, role);
-            } catch (error) {
-                orderHistoryList.innerHTML = `<p>Error: ${error.message}</p>`;
-            }
+            const orders = await response.json();
+            renderOrderHistory(orders);
+
+        } catch (error) {
+            orderHistoryContainer.innerHTML = `<p style="color:red;">${error.message}</p>`;
+        } finally {
+            viewOrdersBtn.style.display = 'none'; // बटन को छिपा दें
         }
-    };
+    });
 
-    showCustomerOrdersBtn.addEventListener('click', () => handleShowOrders('customer'));
-    showVendorOrdersBtn.addEventListener('click', () => handleShowOrders('vendor'));
-
-    function renderOrders(orders, role) {
-        orderHistoryList.innerHTML = '';
+    function renderOrderHistory(orders) {
         if (orders.length === 0) {
-            orderHistoryList.innerHTML = '<p>No orders found.</p>';
+            orderHistoryContainer.innerHTML = '<p>You have no orders yet.</p>';
             return;
         }
+
+        orderHistoryContainer.innerHTML = ''; // पुराना कंटेंट साफ़ करें
         orders.forEach(order => {
             const orderDiv = document.createElement('div');
-            orderDiv.className = 'order-history-item';
-            // अगर वेंडर देख रहा है तो ग्राहक का नाम दिखाओ, अगर ग्राहक देख रहा है तो वेंडर का नाम
-            const otherParty = role === 'vendor' ? `Customer: ${order.user.name}` : `Sold by: ${order.vendor.name}`;
-            
+            orderDiv.className = 'order-history-item'; // CSS के लिए क्लास
+
+            let itemsHtml = order.orderItems.map(item => `<li>${item.name} (Qty: ${item.quantity})</li>`).join('');
+
             orderDiv.innerHTML = `
-                <p><strong>Order ID:</strong> ${order._id}</p>
-                <p><strong>${otherParty}</strong></p>
+                <h4>Order ID: ${order._id}</h4>
                 <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
                 <p><strong>Total:</strong> ₹${order.totalAmount.toFixed(2)}</p>
                 <p><strong>Status:</strong> ${order.status}</p>
+                <ul>${itemsHtml}</ul>
             `;
-            orderHistoryList.appendChild(orderDiv);
+            orderHistoryContainer.appendChild(orderDiv);
         });
     }
 });
-
