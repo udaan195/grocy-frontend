@@ -1,197 +1,48 @@
-// frontend/js/main.js (FINAL, COMPLETE CODE WITH ALL FEATURES)
+// Simplified main.js for final testing
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Configuration & Elements ---
-    const API_BASE_URL = 'https://grocy-backend.onrender.com';
+    // --- सिर्फ टेस्ट के लिए ज़रूरी चीज़ें ---
     const productListDiv = document.getElementById('product-list');
-    const searchForm = document.querySelector('.search-bar');
-    const searchInput = document.querySelector('.search-bar input');
-    const categoriesDiv = document.querySelector('.categories');
-    
-    // Cart Popup Elements
-    const cartPopup = document.getElementById('cart-popup');
-    const cartIconBtn = document.getElementById('cart-icon-btn');
-    const closeCartBtn = document.getElementById('close-cart-btn');
-    const cartItemsDiv = document.getElementById('cart-items');
-    const cartTotalSpan = document.getElementById('cart-total');
-    const checkoutBtn = document.getElementById('checkout-btn');
+    const API_BASE_URL = 'https://grocy-backend.onrender.com';
 
-    // --- State Variables ---
-    let allProducts = []; // सभी प्रोडक्ट्स की एक मास्टर लिस्ट
-    let cart = JSON.parse(localStorage.getItem('cart')) || []; 
+    // 1. पहला अलर्ट: क्या यह स्क्रिप्ट चल रही है?
+    alert("टेस्ट 1: पेज लोड हो गया है और main.js चल रही है।");
 
-    // --- Main Functions ---
+    // 2. देखें कि ज़रूरी HTML एलिमेंट मौजूद है या नहीं
+    if (!productListDiv) {
+        alert("सबसे बड़ी गलती: आपके index.html में id='product-list' वाला div नहीं मिला।");
+        return;
+    }
 
-    // 1. सर्वर से सभी प्रोडक्ट्स लाना
-    async function fetchAllProducts() {
-        if (!productListDiv) return;
-        productListDiv.innerHTML = '<p>Loading products...</p>';
+    // 3. सर्वर से डेटा लाने का फंक्शन
+    async function testFetchProducts() {
+        productListDiv.innerHTML = "<h2>सर्वर से प्रोडक्ट्स लाने की कोशिश की जा रही है...</h2>";
         try {
+            alert("टेस्ट 2: अब सर्वर से प्रोडक्ट्स मंगाए जा रहे हैं...");
             const response = await fetch(`${API_BASE_URL}/api/products`);
-            if (!response.ok) throw new Error('Could not load products');
-            allProducts = await response.json();
-            renderProducts(allProducts); // शुरू में सभी प्रोडक्ट्स दिखाएँ
+            
+            alert(`टेस्ट 3: सर्वर से जवाब मिला! Status Code है: ${response.status}`);
+
+            if (!response.ok) {
+                throw new Error(`सर्वर ने एरर दिया: ${response.status}`);
+            }
+
+            const products = await response.json();
+            
+            if (products.length > 0) {
+                alert(`सफलता! सर्वर से ${products.length} प्रोडक्ट्स मिल गए।`);
+                productListDiv.innerHTML = `<h1 style='color:green;'>टेस्ट सफल! प्रोडक्ट्स लोड हो गए।</h1>`;
+            } else {
+                alert("टेस्ट तो ठीक हुआ, लेकिन सर्वर ने 0 प्रोडक्ट्स भेजे। शायद डेटाबेस खाली है।");
+                productListDiv.innerHTML = "<h1>टेस्ट ठीक है, पर सर्वर से कोई प्रोडक्ट नहीं मिला।</h1>";
+            }
+
         } catch (error) {
-            productListDiv.innerHTML = '<p>Could not load products. Please try again later.</p>';
+            alert(`टेस्ट फेल! एरर आया है: ${error.message}`);
+            productListDiv.innerHTML = `<h1 style='color:red;'>टेस्ट फेल हो गया। एरर: ${error.message}</h1>`;
         }
     }
 
-    // 2. प्रोडक्ट्स को पेज पर दिखाना (FIXED: इमेज के साथ)
-    function renderProducts(productsToRender) {
-        if (!productListDiv) return;
-        productListDiv.innerHTML = '';
-        if (productsToRender.length === 0) {
-            productListDiv.innerHTML = '<p>No products found for this selection.</p>';
-            return;
-        }
-        productsToRender.forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            // --- FIX: इमेज और सही HTML स्ट्रक्चर वापस जोड़ा गया ---
-            card.innerHTML = `
-                <a href="product.html?id=${product._id}" class="product-link">
-                    <div class="product-image-container">
-                        <img src="${product.image}" alt="${product.name}" class="product-image">
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p class="price">₹${product.price} ${product.unit ? `<span class="unit-text">(${product.unit})</span>` : ''}</p>
-                    </div>
-                </a>
-                <button class="add-to-cart-btn" data-product-id="${product._id}">Add to Cart</button>
-            `;
-            productListDiv.appendChild(card);
-        });
-    }
-
-    // 3. कार्ट को अपडेट और सेव करना
-    function updateCart() {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-    }
-
-    // 4. कार्ट पॉपअप को दिखाना (Render Cart)
-    function renderCart() {
-        if (!cartItemsDiv) return;
-        cartItemsDiv.innerHTML = '';
-        if (cart.length === 0) {
-            cartItemsDiv.innerHTML = '<p style="text-align:center;">Your cart is empty.</p>';
-        } else {
-            cart.forEach(cartItem => {
-                const product = allProducts.find(p => p._id === cartItem.productId);
-                if (product) {
-                    const cartItemElement = document.createElement('div');
-                    cartItemElement.className = 'cart-item';
-                    cartItemElement.innerHTML = `
-                        <span class="cart-item-name">${product.name}</span>
-                        <div class="cart-item-controls">
-                            <button class="btn-decrease" data-product-id="${product._id}">-</button>
-                            <span class="cart-item-quantity">${cartItem.quantity}</span>
-                            <button class="btn-increase" data-product-id="${product._id}">+</button>
-                        </div>`;
-                    cartItemsDiv.appendChild(cartItemElement);
-                }
-            });
-        }
-        const total = cart.reduce((sum, item) => {
-            const product = allProducts.find(p => p._id === item.productId);
-            return sum + (product ? product.price * item.quantity : 0);
-        }, 0);
-        if(cartTotalSpan) cartTotalSpan.innerText = total.toFixed(2);
-    }
-    
-    // --- Event Handlers ---
-    function addToCart(productId) {
-        const existingItem = cart.find(item => item.productId === productId);
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            cart.push({ productId: productId, quantity: 1 });
-        }
-        updateCart();
-    }
-
-    function handleCartQuantityChange(productId, change) {
-        const cartItem = cart.find(item => item.productId === productId);
-        if (!cartItem) return;
-        cartItem.quantity += change;
-        if (cartItem.quantity <= 0) {
-            cart = cart.filter(item => item.productId !== productId);
-        }
-        updateCart();
-    }
-    
-    // 7. सर्च और फ़िल्टर का लॉजिक (FIXED)
-    function filterAndRenderProducts() {
-        const keyword = searchInput.value.toLowerCase().trim();
-        const activeCategoryElement = categoriesDiv.querySelector('a.active');
-        const category = activeCategoryElement ? activeCategoryElement.textContent : 'All';
-        
-        const filteredProducts = allProducts.filter(product => {
-            const matchesKeyword = product.name.toLowerCase().includes(keyword);
-            const matchesCategory = (category === 'All' || product.category === category);
-            return matchesKeyword && matchesCategory;
-        });
-        
-        renderProducts(filteredProducts);
-    }
-    
-    // --- Event Listeners Setup ---
-    function setupEventListeners() {
-        if (productListDiv) {
-            productListDiv.addEventListener('click', (e) => {
-                if (e.target.classList.contains('add-to-cart-btn')) {
-                    addToCart(e.target.dataset.productId);
-                }
-            });
-        }
-        if (cartItemsDiv) {
-            cartItemsDiv.addEventListener('click', (e) => {
-                const productId = e.target.dataset.productId;
-                if (e.target.classList.contains('btn-increase')) handleCartQuantityChange(productId, 1);
-                if (e.target.classList.contains('btn-decrease')) handleCartQuantityChange(productId, -1);
-            });
-        }
-        if (searchForm) {
-            searchForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                filterAndRenderProducts();
-            });
-            searchInput.addEventListener('keyup', filterAndRenderProducts);
-        }
-        if (categoriesDiv) {
-            categoriesDiv.addEventListener('click', (e) => {
-                if (e.target.tagName === 'A') {
-                    e.preventDefault();
-                    document.querySelectorAll('.categories a').forEach(a => a.classList.remove('active'));
-                    e.target.classList.add('active');
-                    filterAndRenderProducts(); // फ़िल्टर फंक्शन को कॉल करें
-                }
-            });
-        }
-        if (cartIconBtn) cartIconBtn.addEventListener('click', () => { if(cartPopup) cartPopup.classList.add('open'); });
-        if (closeCartBtn) closeCartBtn.addEventListener('click', () => { if(cartPopup) cartPopup.classList.remove('open'); });
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', () => {
-                if (localStorage.getItem('userInfo')) {
-                    if (cart.length > 0) {
-                        window.location.href = 'checkout.html';
-                    } else { alert('Your cart is empty!'); }
-                } else {
-                    alert('Please login to proceed.');
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-    }
-
-    // --- Initial Page Load Function ---
-    async function init() {
-        await fetchAllProducts(); // पहले प्रोडक्ट्स का इंतज़ार करें
-        renderCart(); // अब कार्ट दिखाएँ
-        setupEventListeners(); // अब सभी बटन्स पर लॉजिक लगाएँ
-    }
-    
-    // पेज लोड होने पर मुख्य फंक्शन चलाएँ
-    init();
+    // फंक्शन को चलाएं
+    testFetchProducts();
 });
