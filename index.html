@@ -7,78 +7,106 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-
 <body>
 
     <header>
-    <div class="header-main">
-        <a href="index.html" class="logo-link">
-            <img src="logo.png" alt="Grocy Logo" class="logo">
-        </a>
-        <div class="header-middle">
-            <form class="search-bar">
-                <input type="text" placeholder="Search for products...">
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
-        </div>
-        <div class="header-right">
-            <a href="#" id="cart-icon-btn" class="header-icon">
-                <i class="fa fa-shopping-cart"></i>
-                <span>Cart</span>
-            </a>
-            <a href="login.html" id="account-link" class="header-icon">
-                <i class="fa fa-user-circle"></i>
-                <span>Login</span>
-            </a>
-            <button id="logout-btn" class="header-icon" style="display:none;">
-                <i class="fa fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </div>
-    </div>
-    <div class="header-sub">
-        </div>
-</header>
+        <div class="header-main">
+            <div class="header-left">
+                <a href="index.html" class="logo-link">
+                    <img src="logo.png" alt="Grocy Logo" class="logo">
+                </a>
+            </div>
+            <div class="header-middle">
+                <form class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-right">
+                <a href="#" id="cart-icon-btn" class="header-icon">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </a>
+                
+                <a href="login.html" id="account-link" class="header-icon">
+                    <i class="fa fa-user-circle"></i>
+                    <span>Login</span>
+                </a>
 
+                <button id="logout-btn" class="header-icon" style="display:none;">
+                    <i class="fa fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+        <div class="header-sub">
+            <div class="categories">
+                <a href="#" class="active">All</a>
+                <a href="#">Vegetables</a>
+                <a href="#">Fruits</a>
+                <a href="#">Dairy</a>
+                <a href="#">Snacks</a>
+                <a href="#">Staples</a>
+            </div>
+        </div>
+    </header>
     
     <section class="hero-slider">
-        </section>
+        <div class="slider-wrapper">
+            <div class="slide"><img src="https://placehold.co/1200x400/28a745/white?text=Fresh+Vegetables" alt="Offer 1"></div>
+            <div class="slide"><img src="https://placehold.co/1200x400/f8c146/black?text=Amazing+Discounts" alt="Offer 2"></div>
+        </div>
+    </section>
 
     <main>
-        <h2>Products</h2>
+        <h2>Our Products</h2>
         <div id="product-list" class="product-grid">
             </div>
     </main>
 
     <div id="cart-popup" class="cart-popup">
+        <div class="cart-popup-header">
+            <h2>My Cart</h2>
+            <button id="close-cart-btn">&times;</button>
         </div>
+        <div id="cart-items" class="cart-popup-items">
+            </div>
+        <div class="cart-popup-footer">
+            <div class="total-section">
+                <span>Total:</span>
+                <strong>₹<span id="cart-total">0.00</span></strong>
+            </div>
+            <button id="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
     
-   <div id="cart-popup" class="cart-popup">
-    <div class="cart-popup-header">
-        <h2>My Cart</h2>
-        <button id="close-cart-btn">&times;</button>
-    </div>
-    <div id="cart-items" class="cart-popup-items">
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Grocy</h3>
+                <p>Fresh products delivered to your doorstep.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
         </div>
-    <div class="cart-popup-footer">
-        <div class="total-section">
-            <span>Total:</span>
-            <strong>₹<span id="cart-total">0.00</span></strong>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Grocy. All Rights Reserved.</p>
         </div>
-        <button id="checkout-btn">Proceed to Checkout</button>
-    </div>
-</div>
-
-<footer>
     </footer>
 
-    <footer>
-        </footer>
-
-     <script src="js/main.js"></script> <script src="js/slider.js"></script>     
-    </body>
-</html>
-
-    </body>
-    
+    <script src="js/main.js"></script>
+    <script src="js/slider.js"></script> </body>
 </html>
