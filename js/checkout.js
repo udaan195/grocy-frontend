@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const shippingForm = document.getElementById('shipping-form');
     const checkoutContainer = document.getElementById('checkout-container');
     const successMessage = document.getElementById('success-message');
+    const useLocationBtn = document.getElementById('use-location-btn');
+    
+    // Modal Elements
+    const detailsModal = document.getElementById('details-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalTitle = document.getElementById('modal-title');
+    const modalImage = document.getElementById('modal-image');
+    const modalDescription = document.getElementById('modal-description');
     
     // --- State Variables ---
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -39,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const validatedCart = cart.filter(item => productsData.some(p => p._id === item.productId));
             if (validatedCart.length !== cart.length) {
-                alert('Some items in your cart were removed as they are no longer available.');
+                alert('Some items were removed from your cart as they are no longer available.');
                 cart = validatedCart;
                 localStorage.setItem('cart', JSON.stringify(cart));
             }
@@ -65,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalAmount += itemTotal;
                 const itemElement = document.createElement('div');
                 itemElement.className = 'summary-item';
+                itemElement.dataset.productId = product._id; // प्रोडक्ट ID को क्लिक के लिए सेव करें
                 itemElement.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="summary-item-image">
                     <div class="summary-item-details">
@@ -95,6 +104,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    function handleGeolocation() {
+        if (navigator.geolocation) {
+            useLocationBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Fetching...';
+            useLocationBtn.disabled = true;
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await response.json();
+                    if (data && data.address) {
+                        document.getElementById('address').value = [data.address.road, data.address.house_number].filter(Boolean).join(', ') || '';
+                        document.getElementById('pincode').value = data.address.postcode || '';
+                        document.getElementById('city').value = data.address.city || data.address.town || '';
+                        document.getElementById('state').value = data.address.state || '';
+                    }
+                } catch (error) { alert('Could not get address from your location.'); } 
+                finally {
+                    useLocationBtn.innerHTML = '<i class="fa fa-map-marker-alt"></i> Use my current location';
+                    useLocationBtn.disabled = false;
+                }
+            }, () => {
+                alert('Could not get your location. Please enable location services.');
+                useLocationBtn.innerHTML = '<i class="fa fa-map-marker-alt"></i> Use my current location';
+                useLocationBtn.disabled = false;
+            });
+        } else { alert('Geolocation is not supported by this browser.'); }
+    }
+
+    function showProductDetailsModal(productId) {
+        const product = productsData.find(p => p._id === productId);
+        if (product && detailsModal) {
+            modalTitle.innerText = product.name;
+            modalImage.src = product.image;
+            modalDescription.innerText = product.description;
+            detailsModal.style.display = 'flex';
+        }
+    }
+
     async function handlePlaceOrder(event) {
         event.preventDefault();
         // ... (Place Order Logic, यह पहले जैसा ही रहेगा) ...
@@ -103,16 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         if (summaryItemsDiv) {
             summaryItemsDiv.addEventListener('click', (e) => {
-                const productId = e.target.dataset.productId;
-                if (!productId) return;
-                if (e.target.classList.contains('btn-increase')) handleQuantityChange(productId, 1);
-                if (e.target.classList.contains('btn-decrease')) handleQuantityChange(productId, -1);
+                const productId = e.target.closest('.summary-item')?.dataset.productId;
+                if (e.target.classList.contains('btn-increase')) handleQuantityChange(e.target.dataset.productId, 1);
+                else if (e.target.classList.contains('btn-decrease')) handleQuantityChange(e.target.dataset.productId, -1);
+                else if (productId) showProductDetailsModal(productId);
             });
         }
-        if (shippingForm) {
-            shippingForm.addEventListener('submit', handlePlaceOrder);
-        }
+        if (shippingForm) shippingForm.addEventListener('submit', handlePlaceOrder);
+        if (useLocationBtn) useLocationBtn.addEventListener('click', handleGeolocation);
+        if (closeModalBtn) closeModalBtn.addEventListener('click', () => detailsModal.style.display = 'none');
     }
 
     initializeCheckout();
 });
+
