@@ -67,5 +67,29 @@
     <footer>
         </footer>
 
-    <script src="js/auth.js"></script> <script src="js/main.js"></script> <script src="js/slider.js"></script> </body>
+    <script src="js/auth.js"></script> <script src="js/main.js"></script> <script src="js/slider.js"></script>     <footer>...</footer>
+
+    <script>
+        // Test 1: क्या यह स्क्रिप्ट चल रही है?
+        alert("टेस्ट 1: पेज लोड हो गया है और स्क्रिप्ट चल रही है!");
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Test 2: क्या यह प्रोडक्ट दिखाने वाला div ढूंढ पा रहा है?
+            const productListDiv = document.getElementById('product-list');
+
+            if (productListDiv) {
+                alert("टेस्ट 2: 'product-list' वाला div मिल गया! अब मैं इसमें टेक्स्ट डाल रहा हूँ।");
+                
+                // div के अंदर का कंटेंट बदलें
+                productListDiv.innerHTML = "<h1 style='text-align:center; color:green;'>टेस्ट सफल! JavaScript सही से काम कर रहा है।</h1>";
+            } else {
+                alert("टेस्ट 2 फेल: 'product-list' नाम का कोई div नहीं मिला। कृपया अपने HTML में id='product-list' चेक करें।");
+            }
+        });
+    </script>
+    </body>
+</html>
+
+    </body>
+    
 </html>
